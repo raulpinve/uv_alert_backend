@@ -38,6 +38,9 @@ CREATE TABLE dispositivos (
     rango_uv_id           INTEGER,
     fecha_actualizacion   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    CONSTRAINT uq_dispositivos_fcm_token
+        UNIQUE (fcm_token),
+
     CONSTRAINT fk_dispositivos_usuario
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
         ON DELETE CASCADE,

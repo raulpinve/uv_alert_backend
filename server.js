@@ -1,6 +1,8 @@
 import express from 'express';
 import { initializeApp, cert } from "firebase-admin/app";
 import serviceAccount from "./firebase-credentials.json" with { type: "json" };
+import "dotenv/config";
+
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -11,18 +13,10 @@ initializeApp({
 
 // Rutas
 import userRoutes from './routes/user.routes.js';
-app.use("/users", userRoutes);
+import dispositivoRoutes from "./routes/dispositivo.routes.js";
 
-
-// TODO: Realizar sistema de autenticación de firebase
-// TODO: - Crear ruta para guardar usuario
-// TODO: - Guardar solo el firebase_id del usuario en la bd, la información del usuario se manejará en flutter con firebase
-// TODO: - Crear sistema de verificación del token del usuario
-
-// TODO: Dispositivos: 
-// TODO: Crear endpoint para guardar la información del dispositivo: lat, long, token de FMC, firebase_id del usuario
-// TODO: Crear endpoint para actualizar la información del dispositivo (lat, long, fecha_actualización)
-// TODO: Eliminar dispositivo del dispositivo luego de que se cierre sesión
+app.use("/dispositivos", dispositivoRoutes);
+app.use("/usuarios", userRoutes);
 
 // TODO: Información del UV
 // TODO: Endpoint para obtener la información actual del UV en el dispositivo

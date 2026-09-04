@@ -1,13 +1,10 @@
 import { pool } from "../init.db.js";
-import {
-  respuestaExitosa,
-  respuestaError
-} from "../utils/response.utils.js";
+import { respuestaExitosa } from "../utils/response.utils.js";
 
 export async function registrarUsuario(req, res) {
   try {
-    const firebaseUid = req.firebaseUser.uid;
-    const nombreCompleto = req.firebaseUser.name;
+    const firebaseUid = req.user.uid;
+    const nombreCompleto = req.user.name;
 
     const partesNombre = nombreCompleto?.trim().split(/\s+/) || [];
 

@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middlewares.js";
-import { registrarUsuario } from "../controllers/user.controller.js";
+import { sincronizar } from "../controllers/dispositivo.controller.js";
+
 const router = Router();
 
 router.post(
   "/",
   authenticateToken,
-  registrarUsuario
+  sincronizar
 );
 
 export default router;
