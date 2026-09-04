@@ -27,5 +27,10 @@ export async function obtenerCiudad(latitud, longitud) {
     data.address?.village ??
     null;
 
-  return ciudad;
+  if (!ciudad) {
+    return null;
+  }
+
+  return ciudad
+    .replace(/\s+ciudad$/i, "");
 }

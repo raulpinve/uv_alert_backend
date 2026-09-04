@@ -19,7 +19,8 @@ export async function sincronizar(req, res) {
     }
 
     const { rows } = await pool.query(
-      `SELECT id
+      `
+      SELECT id
       FROM usuarios
       WHERE firebase_uid = $1
       `,

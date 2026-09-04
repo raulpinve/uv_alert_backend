@@ -1,5 +1,5 @@
 import { obtenerUv } from "../repositories/uv.repository.js";
-import { obtenerCiudad } from "../repositories/geocoding.repository.js";
+import { obtenerDispositivoPorFirebaseUid } from "../repositories/dispositivo.repository.js";
 import {
   respuestaExitosa,
   respuestaError
@@ -7,49 +7,43 @@ import {
 
 export async function obtenerInformacionUv(req, res) {
   try {
-    const { latitud, longitud } = req.query;
+    const firebaseUid = req.user.uid;
+    const { fcm_token } = req.query;
 
-    if (latitud === undefined || longitud === undefined) {
+    if (!fcm_token) {
       return respuestaError(
         res,
         400,
-        "latitud y longitud son obligatorias"
+        "fcm_token es obligatorio"
       );
     }
 
-    const lat = Number(latitud);
-    const lon = Number(longitud);
+    const dispositivo = await obtenerDispositivoPorFirebaseUid(
+      firebaseUid,
+      fcm_token
+    );
 
-    if (
-      !Number.isFinite(lat) ||
-      !Number.isFinite(lon) ||
-      lat < -90 ||
-      lat > 90 ||
-      lon < -180 ||
-      lon > 180
-    ) {
+    if (!dispositivo) {
       return respuestaError(
         res,
-        400,
-        "Latitud o longitud inválida"
+        404,
+        "Dispositivo no encontrado"
       );
     }
 
-    const [uv, ciudad] = await Promise.all([
-      obtenerUv(lat, lon),
-      obtenerCiudad(lat, lon)
-    ]);
-
-    const informacionUv = {
-      ciudad,
-      ...uv
-    };
+    const uv = await obtenerUv(
+      dispositivo.latitud,
+      dispositivo.longitud
+    );
 
     return respuestaExitosa(
       res,
       200,
       "Información UV obtenida correctamente",
-      informacionUv
+      {
+        ciudad: dispositivo.ciudad,
+        ...uv
+      }
     );
 
   } catch (error) {

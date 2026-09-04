@@ -25,31 +25,37 @@ CREATE TABLE usuarios (
     apellidos VARCHAR(150),
     fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
 -- ============================================
 -- Tabla: dispositivos
 -- ============================================
 CREATE TABLE dispositivos (
-    id                    SERIAL PRIMARY KEY,
-    usuario_id            INTEGER NOT NULL,
-    fcm_token             VARCHAR(255) NOT NULL,
-    latitud               DECIMAL(10,7) NOT NULL,
-    longitud              DECIMAL(10,7) NOT NULL,
-    uv_actual             DECIMAL(4,2),
-    rango_uv_id           INTEGER,
-    fecha_actualizacion   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL,
+    fcm_token VARCHAR(255) NOT NULL,
 
-    CONSTRAINT uq_dispositivos_fcm_token
-        UNIQUE (fcm_token),
+    latitud DECIMAL(10,7) NOT NULL,
+    longitud DECIMAL(10,7) NOT NULL,
+    ciudad VARCHAR(100),
+
+    uv_actual DECIMAL(4,2),
+    rango_uv_id INTEGER,
+
+    fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_dispositivos_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_dispositivos_rango_uv
-        FOREIGN KEY (rango_uv_id) REFERENCES rangos_uv(id)
-        ON DELETE SET NULL
-);
+        FOREIGN KEY (rango_uv_id)
+        REFERENCES rangos_uv(id)
+        ON DELETE SET NULL,
 
+    CONSTRAINT uq_dispositivos_fcm_token
+        UNIQUE (fcm_token)
+);
 -- Índices útiles para el cronjob (recorrer dispositivos) y búsquedas por usuario
 CREATE INDEX idx_dispositivos_usuario_id ON dispositivos(usuario_id);
 CREATE INDEX idx_dispositivos_rango_uv_id ON dispositivos(rango_uv_id);
