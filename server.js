@@ -3,6 +3,11 @@ import { initializeApp, cert } from "firebase-admin/app";
 import serviceAccount from "./firebase-credentials.json" with { type: "json" };
 import "dotenv/config";
 
+// Rutas
+import userRoutes from './routes/user.routes.js';
+import dispositivoRoutes from "./routes/dispositivo.routes.js";
+import uvRoutes from './routes/uv.routes.js'
+
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -11,15 +16,10 @@ initializeApp({
   credential: cert(serviceAccount),
 });
 
-// Rutas
-import userRoutes from './routes/user.routes.js';
-import dispositivoRoutes from "./routes/dispositivo.routes.js";
-
 app.use("/dispositivos", dispositivoRoutes);
 app.use("/usuarios", userRoutes);
+app.use("/uv", uvRoutes);
 
-// TODO: Información del UV
-// TODO: Endpoint para obtener la información actual del UV en el dispositivo
 
 // TODO: Realizar el cronJob
 // TODO: Obtener cada dispositivo junto con su latitud y longitud
