@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT;
 app.use(express.json());
 app.use("/", (req, res) => {
-  res.text("Hello uv world!");
+  res.send("Hello uv world!");
 })
 app.use("/dispositivos", dispositivoRoutes);
 app.use("/usuarios", userRoutes);
