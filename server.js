@@ -14,10 +14,6 @@ app.use("/dispositivos", dispositivoRoutes);
 app.use("/usuarios", userRoutes);
 app.use("/uv", uvRoutes);
 
-app.use("/", (req, res) => {
-  res.send("Hello uv world!");
-})
-
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
