@@ -9,12 +9,14 @@ import uvRoutes from './routes/uv.routes.js'
 const app = express();
 const port = process.env.PORT;
 app.use(express.json());
-app.use("/", (req, res) => {
-  res.send("Hello uv world!");
-})
+
 app.use("/dispositivos", dispositivoRoutes);
 app.use("/usuarios", userRoutes);
 app.use("/uv", uvRoutes);
+
+app.use("/", (req, res) => {
+  res.send("Hello uv world!");
+})
 
 // Iniciar el servidor
 app.listen(port, () => {
