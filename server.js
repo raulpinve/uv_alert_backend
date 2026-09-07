@@ -7,7 +7,7 @@ import dispositivoRoutes from "./routes/dispositivo.routes.js";
 import uvRoutes from './routes/uv.routes.js'
 
 const app = express();
-const port = process.env.port;
+const port = process.env.PORT;
 app.use(express.json());
 
 app.use("/dispositivos", dispositivoRoutes);
