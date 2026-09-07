@@ -1,5 +1,9 @@
 import { pool } from "../init.db.js";
-import { sincronizarDispositivo } from "../repositories/dispositivo.repository.js";
+import {
+  sincronizarDispositivo,
+  eliminarDispositivoPorFirebaseUid
+} from "../repositories/dispositivo.repository.js";
+
 import {
   respuestaExitosa,
   respuestaError
@@ -53,6 +57,41 @@ export async function sincronizar(req, res) {
 
   } catch (error) {
     console.error("Error al sincronizar dispositivo:", error);
+
+    return respuestaError(
+      res,
+      500,
+      "Error interno del servidor"
+    );
+  }
+}
+
+export async function desregistrar(req, res) {
+  try {
+    const firebaseUid = req.user.uid;
+    const { fcm_token } = req.body;
+
+    if (!fcm_token) {
+      return respuestaError(
+        res,
+        400,
+        "fcm_token es obligatorio"
+      );
+    }
+
+    await eliminarDispositivoPorFirebaseUid(
+      firebaseUid,
+      fcm_token
+    );
+
+    return respuestaExitosa(
+      res,
+      200,
+      "Dispositivo desregistrado correctamente"
+    );
+
+  } catch (error) {
+    console.error("Error al desregistrar dispositivo:", error);
 
     return respuestaError(
       res,

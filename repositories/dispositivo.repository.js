@@ -108,3 +108,19 @@ export async function obtenerDispositivoPorFirebaseUid(
 
   return rows[0] ?? null;
 }
+
+export async function eliminarDispositivoPorFirebaseUid(
+  firebaseUid,
+  fcmToken
+) {
+  await pool.query(
+    `
+    DELETE FROM dispositivos d
+    USING usuarios u
+    WHERE d.usuario_id = u.id
+      AND u.firebase_uid = $1
+      AND d.fcm_token = $2
+    `,
+    [firebaseUid, fcmToken]
+  );
+}
