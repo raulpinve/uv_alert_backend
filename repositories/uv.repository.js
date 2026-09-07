@@ -26,6 +26,8 @@ export async function obtenerUv(latitud, longitud) {
   }
 
   const data = await response.json();
+  console.log('Open-Meteo timezone:', data.timezone);
+  console.log('Open-Meteo current time:', data.current.time);
 
   return {
     actual: {

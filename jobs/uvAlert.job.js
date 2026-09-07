@@ -1,63 +1,90 @@
 import cron from 'node-cron';
-import { messaging } from "../config/firebase.js";
+import { messaging } from '../config/firebase.js';
 import { pool } from '../init.db.js';
 import { obtenerUv } from '../repositories/uv.repository.js';
 
-// Tips según el rango de UV
-const TIPS_POR_RANGO = {
-  'Bajo': 'Puedes estar al aire libre sin protección especial.',
-  'Moderado': 'Usa protector solar si vas a estar expuesto por largos periodos.',
-  'Alto': 'Usa protector solar, gafas de sol y busca sombra en horas pico.',
-  'Muy alto': 'Evita el sol entre 10am y 4pm. Usa protector solar, sombrero y gafas.',
-  'Extremo': 'Evita salir en horas de sol directo. Protección obligatoria: protector solar, ropa cubierta y sombra.',
-  'Extremo alto': 'Riesgo muy alto de daño en piel en minutos. Evita exposición directa al sol por completo.',
+// Mensajes según el rango de UV
+const MENSAJES_POR_RANGO = {
+  'Bajo':
+    'El sol está suave. Puedes salir tranquilo.',
+
+  'Moderado':
+    'Si vas a estar un buen rato afuera, échate protector solar.',
+
+  'Alto':
+    'Ojo con ese sol. Échate protector solar y busca sombrita de vez en cuando.',
+
+  'Muy alto':
+    'Ese sol está fuerte. Mejor busca sombrita y ponte buen protector solar.',
+
+  'Extremo':
+    'Ajá, ese sol viene con toda. Evita el sol directo y protégete bien.',
+
+  'Extremo alto':
+    'Ese sol está bastante bravo. Mejor evita la exposición directa y busca sombra.',
 };
 
 async function obtenerRangoUV(valorUV) {
   const { rows } = await pool.query(
-    `SELECT id, nombre 
-     FROM rangos_uv 
-     WHERE $1 BETWEEN valor_min AND valor_max`,
+    `
+    SELECT id, nombre
+    FROM rangos_uv
+    WHERE $1 BETWEEN valor_min AND valor_max
+    `,
     [valorUV]
   );
+
   return rows[0] || null;
 }
 
-async function enviarNotificacion(fcmToken, rangoAnterior, rangoNuevo, valorUV) {
-    // Determina si subió, bajó, o es la primera lectura
-    let direccion = 'cambió';
-    if (rangoAnterior?.id != null) {
-        if (rangoNuevo.id > rangoAnterior.id) {
-            direccion = 'subió';
-        } else if (rangoNuevo.id < rangoAnterior.id) {
-            direccion = 'bajó';
-        }
-    }
+async function enviarNotificacion(
+  fcmToken,
+  rangoAnterior,
+  rangoNuevo,
+  valorUV
+) {
+  let direccion = 'cambió';
 
-    const tip = TIPS_POR_RANGO[rangoNuevo.nombre] ?? 'Consulta el índice UV antes de salir.';
-    const mensaje = {
-        token: fcmToken,
-        notification: {
-            title: `El UV ${direccion} a: ${rangoNuevo.nombre}`,
-            body: `Índice UV actual: ${valorUV}. ${tip}`,
-        },
-        data: {
-            uv_actual: String(valorUV),
-            rango_uv_id: String(rangoNuevo.id),
-            direccion,
-        },
-    };
-
-    try {
-        await messaging.send(mensaje);
-        console.log(
-            `Notificación enviada a token ${fcmToken.slice(0, 10)}...`
-        );
-    } catch (error) {
-        console.error(
-            `Error enviando notificación: ${error.message}`
-        );
+  if (rangoAnterior?.id != null) {
+    if (rangoNuevo.id > rangoAnterior.id) {
+      direccion = 'subió';
+    } else if (rangoNuevo.id < rangoAnterior.id) {
+      direccion = 'bajó';
     }
+  }
+
+  const nombreRango = rangoNuevo.nombre.toLowerCase();
+
+  const mensajeTip =
+    MENSAJES_POR_RANGO[rangoNuevo.nombre] ??
+    'Échale un ojo al índice UV antes de salir.';
+
+  const mensaje = {
+    token: fcmToken,
+
+    notification: {
+      title: `El UV ${direccion} a nivel ${nombreRango}`,
+      body: `Está en ${valorUV}. ${mensajeTip}`,
+    },
+
+    data: {
+      uv_actual: String(valorUV),
+      rango_uv_id: String(rangoNuevo.id),
+      direccion,
+    },
+  };
+
+  try {
+    await messaging.send(mensaje);
+
+    console.log(
+      `Notificación enviada a token ${fcmToken.slice(0, 10)}...`
+    );
+  } catch (error) {
+    console.error(
+      `Error enviando notificación: ${error.message}`
+    );
+  }
 }
 
 async function procesarDispositivo(dispositivo) {
@@ -66,7 +93,7 @@ async function procesarDispositivo(dispositivo) {
     latitud,
     longitud,
     fcm_token,
-    rango_uv_id: rangoAnteriorId
+    rango_uv_id: rangoAnteriorId,
   } = dispositivo;
 
   try {
@@ -88,7 +115,7 @@ async function procesarDispositivo(dispositivo) {
 
     await pool.query(
       `
-      UPDATE dispositivos 
+      UPDATE dispositivos
       SET uv_actual = $1,
           rango_uv_id = $2,
           fecha_actualizacion = CURRENT_TIMESTAMP
@@ -106,7 +133,9 @@ async function procesarDispositivo(dispositivo) {
         `,
         [rangoAnteriorId]
       );
+
       const rangoAnterior = rows[0] || null;
+
       await enviarNotificacion(
         fcm_token,
         rangoAnterior,
@@ -114,7 +143,6 @@ async function procesarDispositivo(dispositivo) {
         valorUV
       );
     }
-
   } catch (error) {
     console.error(
       `Error procesando dispositivo ${id}: ${error.message}`
@@ -122,16 +150,26 @@ async function procesarDispositivo(dispositivo) {
   }
 }
 
-// Función del cronJob
+// CronJob de monitoreo UV
 async function ejecutarCronJob() {
-    console.log('Iniciando cronjob de monitoreo UV...');
+  console.log('Iniciando cronjob de monitoreo UV...');
 
   try {
     const { rows: dispositivos } = await pool.query(
-      `SELECT id, latitud, longitud, fcm_token, rango_uv_id FROM dispositivos`
+      `
+      SELECT
+        id,
+        latitud,
+        longitud,
+        fcm_token,
+        rango_uv_id
+      FROM dispositivos
+      `
     );
 
-    console.log(`Procesando ${dispositivos.length} dispositivo(s)...`);
+    console.log(
+      `Procesando ${dispositivos.length} dispositivo(s)...`
+    );
 
     for (const dispositivo of dispositivos) {
       await procesarDispositivo(dispositivo);
@@ -139,10 +177,15 @@ async function ejecutarCronJob() {
 
     console.log('Cronjob finalizado.');
   } catch (error) {
-    console.error(`Error general en el cronjob: ${error.message}`);
+    console.error(
+      `Error general en el cronjob: ${error.message}`
+    );
   }
 }
 
 cron.schedule('0 */30 * * * *', ejecutarCronJob);
 
-export { ejecutarCronJob, enviarNotificacion };
+export {
+  ejecutarCronJob,
+  enviarNotificacion,
+};
