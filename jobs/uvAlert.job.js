@@ -183,7 +183,7 @@ async function ejecutarCronJob() {
   }
 }
 
-cron.schedule('0 */30 * * * *', ejecutarCronJob);
+cron.schedule('0 */30 8-18 * * *', ejecutarCronJob);
 
 export {
   ejecutarCronJob,
