@@ -1,6 +1,9 @@
 import { pool } from '../init.db.js';
 
 export const MENSAJES_POR_RANGO = {
+  'Sin UV':
+    'No hay radiación UV en este momento. Puedes salir tranquilo.',
+
   'Bajo':
     'El sol está suave. Puedes salir tranquilo.',
 
@@ -19,7 +22,6 @@ export const MENSAJES_POR_RANGO = {
   'Extremo alto':
     'Ese sol está bastante bravo. Mejor evita la exposición directa y busca sombra.',
 };
-
 export async function obtenerRangoUV(valorUV) {
   const { rows } = await pool.query(
     `

@@ -61,7 +61,8 @@ CREATE INDEX idx_dispositivos_usuario_id ON dispositivos(usuario_id);
 CREATE INDEX idx_dispositivos_rango_uv_id ON dispositivos(rango_uv_id);
 
 INSERT INTO rangos_uv (nombre, valor_min, valor_max) VALUES
-    ('Bajo',         0.00,  2.99),
+    ('Sin UV',       0.00,  0.49),
+    ('Bajo',         0.50,  2.99),
     ('Moderado',     3.00,  5.99),
     ('Alto',         6.00,  7.99),
     ('Muy alto',     8.00, 10.99),

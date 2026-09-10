@@ -7,3 +7,4 @@ const app = initializeApp({
 });
 
 export const messaging = getMessaging(app);
+export { app }; 
