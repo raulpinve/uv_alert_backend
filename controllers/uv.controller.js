@@ -5,17 +5,18 @@ import {
   respuestaError
 } from "../utils/response.utils.js";
 
+import {
+  obtenerRangoUV,
+  obtenerMensajeRecomendacion,
+} from '../utils/uvRango.util.js';
+
 export async function obtenerInformacionUv(req, res) {
   try {
     const firebaseUid = req.user.uid;
     const { fcm_token } = req.query;
 
     if (!fcm_token) {
-      return respuestaError(
-        res,
-        400,
-        "fcm_token es obligatorio"
-      );
+      return respuestaError(res, 400, "fcm_token es obligatorio");
     }
 
     const dispositivo = await obtenerDispositivoPorFirebaseUid(
@@ -24,17 +25,20 @@ export async function obtenerInformacionUv(req, res) {
     );
 
     if (!dispositivo) {
-      return respuestaError(
-        res,
-        404,
-        "Dispositivo no encontrado"
-      );
+      return respuestaError(res, 404, "Dispositivo no encontrado");
     }
 
-    const uv = await obtenerUv(
-      dispositivo.latitud,
-      dispositivo.longitud
-    );
+    const uv = await obtenerUv(dispositivo.latitud, dispositivo.longitud);
+
+    const rango = await obtenerRangoUV(uv.actual.uv);
+
+    const recomendacion = rango
+      ? {
+          rango_uv_id: rango.id,
+          nombre: rango.nombre,
+          mensaje: obtenerMensajeRecomendacion(rango.nombre),
+        }
+      : null;
 
     return respuestaExitosa(
       res,
@@ -42,17 +46,13 @@ export async function obtenerInformacionUv(req, res) {
       "Información UV obtenida correctamente",
       {
         ciudad: dispositivo.ciudad,
-        ...uv
+        ...uv,
+        recomendacion,
       }
     );
 
   } catch (error) {
     console.error("Error al obtener información UV:", error);
-
-    return respuestaError(
-      res,
-      500,
-      "Error interno del servidor"
-    );
+    return respuestaError(res, 500, "Error interno del servidor");
   }
 }

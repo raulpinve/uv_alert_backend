@@ -2,40 +2,10 @@ import cron from 'node-cron';
 import { messaging } from '../config/firebase.js';
 import { pool } from '../init.db.js';
 import { obtenerUv } from '../repositories/uv.repository.js';
-
-// Mensajes según el rango de UV
-const MENSAJES_POR_RANGO = {
-  'Bajo':
-    'El sol está suave. Puedes salir tranquilo.',
-
-  'Moderado':
-    'Si vas a estar un buen rato afuera, échate protector solar.',
-
-  'Alto':
-    'Ojo con ese sol. Échate protector solar y busca sombrita de vez en cuando.',
-
-  'Muy alto':
-    'Ese sol está fuerte. Mejor busca sombrita y ponte buen protector solar.',
-
-  'Extremo':
-    'Ajá, ese sol viene con toda. Evita el sol directo y protégete bien.',
-
-  'Extremo alto':
-    'Ese sol está bastante bravo. Mejor evita la exposición directa y busca sombra.',
-};
-
-async function obtenerRangoUV(valorUV) {
-  const { rows } = await pool.query(
-    `
-    SELECT id, nombre
-    FROM rangos_uv
-    WHERE $1 BETWEEN valor_min AND valor_max
-    `,
-    [valorUV]
-  );
-
-  return rows[0] || null;
-}
+import {
+  obtenerRangoUV,
+  obtenerMensajeRecomendacion,
+} from '../utils/uvRango.util.js';
 
 async function enviarNotificacion(
   fcmToken,
@@ -54,10 +24,7 @@ async function enviarNotificacion(
   }
 
   const nombreRango = rangoNuevo.nombre.toLowerCase();
-
-  const mensajeTip =
-    MENSAJES_POR_RANGO[rangoNuevo.nombre] ??
-    'Échale un ojo al índice UV antes de salir.';
+  const mensajeTip = obtenerMensajeRecomendacion(rangoNuevo.nombre);
 
   const mensaje = {
     token: fcmToken,
