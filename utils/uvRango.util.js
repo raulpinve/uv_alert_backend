@@ -2,26 +2,27 @@ import { pool } from '../init.db.js';
 
 export const MENSAJES_POR_RANGO = {
   'Sin UV':
-    'No hay radiación UV en este momento. Puedes salir tranquilo.',
+    'Tranquilo mi loco, no hay radiación UV ahorita. Sal sin problema.',
 
   'Bajo':
-    'El sol está suave. Puedes salir tranquilo.',
+    'La cosa está suave, la radiación UV está bajita. Sal tranquilo.',
 
   'Moderado':
-    'Si vas a estar un buen rato afuera, échate protector solar.',
+    'Si te vas a quedar un rato afuera, échate el bloqueador pa\' que no te ponga como camarón.',
 
   'Alto':
-    'Ojo con ese sol. Échate protector solar y busca sombrita de vez en cuando.',
+    'Ey mani, la radiación UV está alta aunque esté nublado. Échate bloqueador y búscate una sombrita de vez en cuando.',
 
   'Muy alto':
-    'Ese sol está fuerte. Mejor busca sombrita y ponte buen protector solar.',
+    'Asu, esto está bravo — la UV está muy alta, haga sol o esté tapao\' el cielo. Ponte buen bloqueador y no te me achicharres.',
 
   'Extremo':
-    'Ajá, ese sol viene con toda. Evita el sol directo y protégete bien.',
+    '¡Ombeee! La radiación UV está a millón, aunque no veas el sol de frente. Échate bloqueador full y evita el sol directo.',
 
   'Extremo alto':
-    'Ese sol está bastante bravo. Mejor evita la exposición directa y busca sombra.',
+    'Esto está que arde, mi loco. La UV está en el tope, nublado o no. Ponte bloqueador ya mismo y búscate sombra, no te expongas de frente.',
 };
+
 export async function obtenerRangoUV(valorUV) {
   const { rows } = await pool.query(
     `
@@ -38,6 +39,6 @@ export async function obtenerRangoUV(valorUV) {
 export function obtenerMensajeRecomendacion(nombreRango) {
   return (
     MENSAJES_POR_RANGO[nombreRango] ??
-    'Échale un ojo al índice UV antes de salir.'
+    'Échale un ojo al índice UV antes de salir, parce.'
   );
 }
