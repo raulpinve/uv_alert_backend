@@ -2,7 +2,7 @@ import { pool } from '../init.db.js';
 
 export const MENSAJES_POR_RANGO = {
   'Sin UV':
-    'Tranquilo mi loco, no hay radiación UV ahorita. Sal sin problema.',
+    'Todo bien, mi loco — no hay radiación UV ahorita. Sal tranquilo.',
 
   'Bajo':
     'La cosa está suave, la radiación UV está bajita. Sal tranquilo.',
@@ -13,8 +13,7 @@ export const MENSAJES_POR_RANGO = {
   'Alto':
     'Ey mani, la radiación UV está alta aunque esté nublado. Échate bloqueador y búscate una sombrita de vez en cuando.',
 
-  'Muy alto':
-    'Asu, esto está bravo — la UV está muy alta, haga sol o esté tapao\' el cielo. Ponte buen bloqueador y no te me achicharres.',
+  'Muy alto': 'Ey, la UV está bien alta, así el cielo esté tapao\'. Ponte buen bloqueador, no te me vayas a achicharrar.',
 
   'Extremo':
     '¡Ombeee! La radiación UV está a millón, aunque no veas el sol de frente. Échate bloqueador full y evita el sol directo.',
