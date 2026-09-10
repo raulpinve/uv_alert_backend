@@ -1,5 +1,5 @@
 import { pool } from "../init.db.js";
-import { respuestaExitosa } from "../utils/response.utils.js";
+import { respuestaError, respuestaExitosa } from "../utils/response.utils.js";
 
 export async function registrarUsuario(req, res) {
   try {
