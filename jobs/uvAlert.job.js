@@ -162,9 +162,9 @@ async function ejecutarCronJob() {
   }
 }
 
-// cron.schedule('0 */15 8-18 * * *', ejecutarCronJob, {
-//   timezone: 'America/Bogota',
-// });
+cron.schedule('0 */15 6-19 * * *', ejecutarCronJob, {
+  timezone: 'America/Bogota',
+});
 
 
 export {
