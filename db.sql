@@ -68,3 +68,14 @@ INSERT INTO rangos_uv (nombre, valor_min, valor_max) VALUES
     ('Muy alto',     8.00, 10.99),
     ('Extremo',      11.00, 13.99),
     ('Extremo alto', 14.00, 20.00);
+
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+ALTER TABLE rangos_uv
+ADD CONSTRAINT rangos_uv_no_overlap
+EXCLUDE USING gist (numrange(valor_min, valor_max, '[]') WITH &&);
+
+
+ALTER TABLE dispositivos
+ADD CONSTRAINT fk_rango_uv
+FOREIGN KEY (rango_uv_id) REFERENCES rangos_uv(id);

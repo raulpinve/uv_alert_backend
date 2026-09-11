@@ -25,9 +25,11 @@ export const MENSAJES_POR_RANGO = {
 export async function obtenerRangoUV(valorUV) {
   const { rows } = await pool.query(
     `
-    SELECT id, nombre
+    SELECT id, nombre, valor_min
     FROM rangos_uv
     WHERE $1 BETWEEN valor_min AND valor_max
+    ORDER BY valor_min DESC
+    LIMIT 1
     `,
     [valorUV]
   );

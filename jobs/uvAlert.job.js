@@ -15,10 +15,13 @@ async function enviarNotificacion(
 ) {
   let direccion = 'cambió';
 
-  if (rangoAnterior?.id != null) {
-    if (rangoNuevo.id > rangoAnterior.id) {
+  if (rangoAnterior?.valor_min != null) {
+    const minAnterior = parseFloat(rangoAnterior.valor_min);
+    const minNuevo = parseFloat(rangoNuevo.valor_min);
+
+    if (minNuevo > minAnterior) {
       direccion = 'subió';
-    } else if (rangoNuevo.id < rangoAnterior.id) {
+    } else if (minNuevo < minAnterior) {
       direccion = 'bajó';
     }
   }
@@ -48,9 +51,10 @@ async function enviarNotificacion(
       `Notificación enviada a token ${fcmToken.slice(0, 10)}...`
     );
   } catch (error) {
-    console.error(
-      `Error enviando notificación: ${error.message}`
-    );
+    if (error.code === 'messaging/registration-token-not-registered') {
+      await pool.query('DELETE FROM dispositivos WHERE fcm_token = $1', [fcmToken]);
+    }
+    console.error(`Error enviando notificación: ${error.message}`);
   }
 }
 
@@ -77,8 +81,9 @@ async function procesarDispositivo(dispositivo) {
       return;
     }
 
+    const esPrimeraVez = rangoAnteriorId == null;
     const huboCambioDeRango =
-      rangoAnteriorId !== rangoNuevo.id;
+      !esPrimeraVez && rangoAnteriorId !== rangoNuevo.id;
 
     await pool.query(
       `
@@ -91,10 +96,17 @@ async function procesarDispositivo(dispositivo) {
       [valorUV, rangoNuevo.id, id]
     );
 
+    if (esPrimeraVez) {
+      console.log(
+        `Dispositivo ${id} inicializado con rango ${rangoNuevo.nombre} (sin notificación).`
+      );
+      return;
+    }
+
     if (huboCambioDeRango) {
       const { rows } = await pool.query(
         `
-        SELECT id, nombre
+        SELECT id, nombre, valor_min
         FROM rangos_uv
         WHERE id = $1
         `,
@@ -150,9 +162,10 @@ async function ejecutarCronJob() {
   }
 }
 
-cron.schedule('0 */15 8-18 * * *', ejecutarCronJob, {
-  timezone: 'America/Bogota',
-});
+// cron.schedule('0 */15 8-18 * * *', ejecutarCronJob, {
+//   timezone: 'America/Bogota',
+// });
+
 
 export {
   ejecutarCronJob,
