@@ -5,42 +5,24 @@ import { obtenerUv } from '../repositories/uv.repository.js';
 import {
   obtenerRangoUV,
   obtenerMensajeRecomendacion,
+  obtenerTituloNotificacion
 } from '../utils/uvRango.util.js';
 
-async function enviarNotificacion(
-  fcmToken,
-  rangoAnterior,
-  rangoNuevo,
-  valorUV
-) {
-  let direccion = 'cambió';
-
-  if (rangoAnterior?.valor_min != null) {
-    const minAnterior = parseFloat(rangoAnterior.valor_min);
-    const minNuevo = parseFloat(rangoNuevo.valor_min);
-
-    if (minNuevo > minAnterior) {
-      direccion = 'subió';
-    } else if (minNuevo < minAnterior) {
-      direccion = 'bajó';
-    }
-  }
-
-  const nombreRango = rangoNuevo.nombre.toLowerCase();
+async function enviarNotificacion(fcmToken, rangoNuevo, valorUV) {
+  const tituloNotificacion = obtenerTituloNotificacion(rangoNuevo.nombre);
   const mensajeTip = obtenerMensajeRecomendacion(rangoNuevo.nombre);
 
   const mensaje = {
     token: fcmToken,
 
     notification: {
-      title: `El UV ${direccion} a nivel ${nombreRango}`,
+      title: tituloNotificacion,
       body: `Está en ${valorUV}. ${mensajeTip}`,
     },
 
     data: {
       uv_actual: String(valorUV),
       rango_uv_id: String(rangoNuevo.id),
-      direccion,
     },
   };
 
@@ -104,23 +86,7 @@ async function procesarDispositivo(dispositivo) {
     }
 
     if (huboCambioDeRango) {
-      const { rows } = await pool.query(
-        `
-        SELECT id, nombre, valor_min
-        FROM rangos_uv
-        WHERE id = $1
-        `,
-        [rangoAnteriorId]
-      );
-
-      const rangoAnterior = rows[0] || null;
-
-      await enviarNotificacion(
-        fcm_token,
-        rangoAnterior,
-        rangoNuevo,
-        valorUV
-      );
+      await enviarNotificacion(fcm_token, rangoNuevo, valorUV);
     }
   } catch (error) {
     console.error(

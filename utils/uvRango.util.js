@@ -2,61 +2,75 @@ import { pool } from '../init.db.js';
 
 export const MENSAJES_POR_RANGO = {
   'Sin UV': [
-    'Todo bien, mi llave — no hay radiación UV ahorita. Puedes salir sin lío.',
-    'La UV está en cero, mi llave. Puedes salir sin miedo a quedar como camarón.',
-    'Relájate, que el sol está suavecito y la UV no está haciendo de las suyas.',
-    'Hoy el sol está portándose bien. No hay UV peligrosa, así que dale sin mente.',
-    'La UV está dormida. Aprovecha y sal a darte tu vueltica.',
+    'Todo bien por ahora, no hay radiación UV.',
+    'La UV está en cero por el momento.',
+    'De una, parce, no hay UV.',
+    'Tranquilo, la UV no está activa.',
+    'No hay radiación UV que te preocupe ahorita.',
   ],
 
   'Bajo': [
-    'La cosa está suave, mi llave. La radiación UV está bajita. Puedes salir sin lío.',
-    'La UV está más relajada que uno un domingo después del almuerzo.',
-    'Todo bajo control, mi llave. La UV está bajita, así que dale sin mente.',
-    'El sol está haciendo presencia, pero la UV está juiciosa. Puedes salir sin miedo.',
-    'La UV está suave como brisa de playa. Aprovecha y sal un rato.',
+    'La cosa está suave, la UV está bajita. Puedes salir sin problema.',
+    'Todo tranquilo, parce. La UV está baja, así que dale con confianza.',
+    'La UV anda relajada por ahora. Puedes salir sin mayor lío.',
+    'Está bajita la radiación. Aprovecha y sal un rato sin preocuparte tanto.',
+    'La UV está juiciosa hoy. Puedes salir tranquilo, sin tanto cuidado.',
   ],
 
   'Moderado': [
-    'Si te vas a quedar un rato afuera, échate el bloqueador pa\' que no te ponga como camarón.',
-    'Ojo ahí, mi llave. La UV ya está cogiendo fuerza. Un poquito de bloqueador no mata a nadie.',
-    'La UV está moderada. Échate tu bloqueador antes de salir, que después uno anda como tomate.',
-    'Si vas pa\' la calle, bloqueador. No esperes a sentir el sol pa\' acordarte.',
-    'La UV está subiendo. Ponte bloqueador y no te pongas a desafiar el sol, que después pareces langosta.',
+    'Si te vas a quedar afuera un rato, échate el bloqueador pa\' cuidarte.',
+    'Ojo ahí, la UV ya está cogiendo fuerza. No estaría de más un bloqueador.',
+    'La UV está moderada. Échate tu bloqueador antes de salir.',
+    'Si vas pa\' la calle, no olvides el bloqueador.',
+    'La UV está subiendo. Ponte bloqueador antes de exponerte mucho tiempo.',
   ],
 
   'Alto': [
-    'Ey, mi llave, la radiación UV está alta aunque esté nublado. Échate bloqueador y búscate una sombrita.',
-    'Ajá, mi llave, la UV está fuerte. Bloqueador puesto y no te quedes tostándote como arepa.',
+    'Ey, parce, la UV está alta aunque esté nublado. Échate bloqueador y búscate una sombrita.',
+    'La UV está fuerte hoy. Bloqueador puesto y evita quedarte mucho rato al sol directo.',
     'La cosa se está poniendo seria. Bloqueador y sombra cuando puedas.',
-    'Ojo con esa UV. Que esté nublado no significa que el sol se fue de vacaciones.',
-    'La UV está alta. Ponte bloqueador antes de salir, no después de quedar como camarón.',
+    'Ojo con esa UV. Que esté nublado no quiere decir que no esté fuerte.',
+    'La UV está alta. Ponte bloqueador antes de salir, no cuando ya sea tarde.',
   ],
 
   'Muy alto': [
-    'Ey, la UV está bien alta, así el cielo esté tapao\'. Ponte buen bloqueador y no te me vayas a achicharrar.',
-    'Mi llave, esto está fuerte. Bloqueador ya y busca sombra, que aquí nadie quiere quedar como chicharrón.',
-    'La UV está pasada de revoluciones. Ponte bloqueador y evita quedarte bajo el sol directo.',
-    'Aunque esté nublado, esa UV viene con ganas de pelea. Bloqueador y sombrita.',
-    'Ojo ahí, mi llave. La UV está muy alta. No salgas a pecho pelao\' como si estuvieras en la playa.',
+    'La UV está bien alta, así el cielo esté tapao\'. Ponte buen bloqueador y cuídate.',
+    'Parce, esto está fuerte. Bloqueador ya y busca sombra en lo que puedas.',
+    'La UV está pasada de revoluciones. Ponte bloqueador y evita el sol directo.',
+    'Aunque esté nublado, esa UV viene con ganas. Bloqueador y sombrita, por si acaso.',
+    'Ojo ahí, la UV está muy alta. Mejor no te expongas mucho tiempo sin protección.',
   ],
 
   'Extremo': [
-    '¡Ombeee! La radiación UV está a millón, aunque no veas el sol de frente. Échate bloqueador full y evita el sol directo.',
-    '¡Mi llave, esto está criminal! La UV está extrema. Bloqueador, sombra y nada de hacerse el Superman.',
-    '¡Ajá! Hoy el sol amaneció con ganas de cobrar. UV extrema: bloqueador y evita el sol directo.',
-    '¡Ojo! Esa UV está disparada. No te me vayas a achicharrar por andar de valiente.',
+    '¡Ombe! La UV está a millón, aunque no veas el sol de frente. Échate bloqueador full y evita el sol directo.',
+    '¡Parce, esto está serio! La UV está extrema. Bloqueador, sombra y cuidado.',
+    'Hoy la UV amaneció con todo. Bloqueador y evita el sol directo, no es pa\' jugar.',
+    '¡Ojo! Esa UV está disparada. Protégete bien si vas a salir.',
     'Esto no es pa\' jugar. La UV está extrema. Bloqueador full y busca sombra.',
   ],
 
   'Extremo alto': [
-    'Esto está que arde, mi llave. La UV está en el tope, nublado o no. Ponte bloqueador ya mismo y búscate sombra.',
-    '¡Ombe, guarda esa humanidad! La UV está por las nubes. Bloqueador y sombra, mi llave.',
-    'Esto está más peligroso que ventilador sin luz en pleno mediodía. UV extrema: busca sombra y protégete.',
-    '¡Ajá! La UV está a otro nivel. No salgas a desafiar el sol porque hoy viene buscando víctimas.',
-    'Esto está como pa\' freír huevo en la calle. UV al máximo: bloqueador, sombra y evita el sol directo.',
+    'Esto está que arde, parce. La UV está en el tope, nublado o no. Ponte bloqueador ya mismo y búscate sombra.',
+    '¡Ombe, cuídate bien! La UV está por las nubes. Bloqueador y sombra, sin excusas.',
+    'Esto está más peligroso de lo normal. UV extrema: busca sombra y protégete.',
+    '¡Ajá! La UV está a otro nivel. Mejor no te expongas hoy sin protección.',
+    'Esto está al máximo. UV extrema: bloqueador, sombra y evita el sol directo.',
   ],
 };
+
+export const TITULOS_POR_RANGO = {
+  'Sin UV': 'Todo tranquilo con el UV',
+  'Bajo': 'La UV anda bajita',
+  'Moderado': 'La UV se está calentando',
+  'Alto': 'La UV está pegando',
+  'Muy alto': 'La UV está brava',
+  'Extremo': '¡La UV está a millón!',
+  'Extremo alto': '¡La UV está que arde!',
+};
+
+export function obtenerTituloNotificacion(nombreRango) {
+  return TITULOS_POR_RANGO[nombreRango] || `UV en nivel ${nombreRango.toLowerCase()}`;
+}
 
 export async function obtenerRangoUV(valorUV) {
   const { rows } = await pool.query(
