@@ -81,6 +81,7 @@ const handleErrorResponse = (err, req, res, next) => {
       break;
 
     default:
+      console.error("Error no controlado:", err);
       errorObject = handleHTTPThrowErrors.handleDefaultErrorResponse();
       break;
   }

@@ -23,6 +23,16 @@ export function throwConflictError(field, message = "Conflict") {
   throw error;
 }
 
+export function throwBadRequestMultiple(
+  errors,
+  message = "Los datos proporcionados no son válidos"
+) {
+  const error = new Error(message);
+  error.errors = errors; // ya viene como [{ field, message }]
+  error.name = "BadRequestErrorMultiple";
+  throw error;
+}
+
 export function throwBadRequestErrorWithMultipleErrors(
   errors,
   message = "Los datos proporcionados no son válidos"
