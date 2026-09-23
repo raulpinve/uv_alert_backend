@@ -1,3 +1,4 @@
+
 export function throwBadRequestError(message = "Bad request") {
   const error = new Error(message);
   error.name = "BadRequestError";

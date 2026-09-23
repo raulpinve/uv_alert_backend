@@ -3,11 +3,9 @@ import {
   sincronizarDispositivo,
   eliminarDispositivoPorFirebaseUid
 } from "../repositories/dispositivo.repository.js";
+
 import { throwBadRequestError, throwNotFoundError } from "../errors/throwHTTPErrors.js";
-import {
-  respuestaExitosa,
-  respuestaError
-} from "../utils/response.utils.js";
+import {respuestaExitosa } from "../utils/response.utils.js";
 
 export async function sincronizar(req, res, next) {
   try {
@@ -28,11 +26,7 @@ export async function sincronizar(req, res, next) {
     );
 
     if (rows.length === 0) {
-      return respuestaError(
-        res,
-        404,
-        "Usuario no encontrado"
-      );
+      throwNotFoundError( "Usuario no encontrado");
     }
 
     const usuarioId = rows[0].id;
@@ -53,7 +47,6 @@ export async function sincronizar(req, res, next) {
 
   } catch (error) {
     console.error("Error al sincronizar dispositivo:", error);
-
    next(error);
   }
 }
@@ -64,11 +57,7 @@ export async function desregistrar(req, res, next) {
     const { fcm_token } = req.body;
 
     if (!fcm_token) {
-      return respuestaError(
-        res,
-        400,
-        "fcm_token es obligatorio"
-      );
+      throwBadRequestError("fcm_token es obligatorio");
     }
 
     await eliminarDispositivoPorFirebaseUid(
