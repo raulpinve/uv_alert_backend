@@ -1,11 +1,12 @@
+import { pool } from "../init.db.js";
 
 /**
- * Busca un usuario por su firebase_uid.
+ * Finds a user by their firebase_uid.
  */
 export async function findByFirebaseUid(firebaseUid) {
   const { rows } = await pool.query(
-    `SELECT id, firebase_uid, nombre, apellidos, tipo_piel_id, fecha_registro
-     FROM usuarios
+    `SELECT id, firebase_uid, first_name, last_name, skin_type_id, registered_at
+     FROM users
      WHERE firebase_uid = $1`,
     [firebaseUid]
   );
@@ -13,18 +14,16 @@ export async function findByFirebaseUid(firebaseUid) {
 }
 
 /**
- * Actualiza (registra) el tipo de piel de un usuario, identificado por firebase_uid.
- * Devuelve el usuario actualizado, o null si no existe.
+ * Updates (registers) a user's skin type, identified by firebase_uid.
+ * Returns the updated user, or null if the user does not exist.
  */
-export async function updateTipoPiel(firebaseUid, tipoPielId) {
+export async function updateSkinType(firebaseUid, skinTypeId) {
   const { rows } = await pool.query(
-    `UPDATE usuarios
-     SET tipo_piel_id = $2
+    `UPDATE users
+     SET skin_type_id = $2
      WHERE firebase_uid = $1
-     RETURNING id, firebase_uid, nombre, apellidos, tipo_piel_id`,
-    [firebaseUid, tipoPielId]
+     RETURNING id, firebase_uid, first_name, last_name, skin_type_id`,
+    [firebaseUid, skinTypeId]
   );
   return rows[0] || null;
 }
-import { pool } from "../init.db.js";
-

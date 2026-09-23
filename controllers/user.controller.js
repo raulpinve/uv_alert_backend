@@ -1,33 +1,36 @@
-import { respuestaExitosa } from "../utils/response.utils.js";
-import { findById as findTipoPielById } from "../repositories/tiposPiel.repository.js";
-import { updateTipoPiel } from "../repositories/user.repository.js";
-import { throwBadRequestFieldError } from "../errors/throwHTTPErrors.js";
+import { successResponse } from "../utils/response.utils.js";
+import { findById as findSkinTypeById } from "../repositories/skinTypes.repository.js";
+import { updateSkinType } from "../repositories/user.repository.js";
+import {
+  throwBadRequestFieldError,
+  throwNotFoundError,
+} from "../errors/throwHTTPErrors.js";
 
-export async function registrarTipoPiel(req, res) {
+export async function registerSkinType(req, res) {
   const firebaseUid = req.user.uid;
-  const { tipo_piel_id } = req.body;
+  const { skin_type_id } = req.body;
 
-  if (!tipo_piel_id) {
-    throwBadRequestFieldError("tipo_piel_id", "tipo_piel_id es requerido");
+  if (!skin_type_id) {
+    throwBadRequestFieldError("skin_type_id", "El tipo de piel es requerido");
   }
 
-  const tipoPiel = await findTipoPielById(tipo_piel_id);
-  if (!tipoPiel) {
+  const skinType = await findSkinTypeById(skin_type_id);
+  if (!skinType) {
     throwBadRequestFieldError(
-      "tipo_piel_id",
-      "tipo_piel_id no existe en el catálogo"
+      "skin_type_id",
+      "El tipo de piel seleccionado no existe"
     );
   }
 
-  const usuarioActualizado = await updateTipoPiel(firebaseUid, tipo_piel_id);
-  if (!usuarioActualizado) {
+  const updatedUser = await updateSkinType(firebaseUid, skin_type_id);
+  if (!updatedUser) {
     throwNotFoundError("Usuario no encontrado");
   }
 
-  return respuestaExitosa(
+  return successResponse(
     res,
     200,
     "Tipo de piel registrado correctamente",
-    usuarioActualizado
+    updatedUser
   );
 }
