@@ -5,18 +5,11 @@ import {
   getUvRange,
   getRecommendationMessage,
 } from "../utils/uvRange.utils.js";
-import {
-  throwBadRequestFieldError,
-  throwNotFoundError,
-} from "../errors/throwHTTPErrors.js";
+import { throwNotFoundError } from "../errors/throwHTTPErrors.js";
 
 export async function getUvInfo(req, res) {
   const firebaseUid = req.user.uid;
   const { fcm_token } = req.query;
-
-  if (!fcm_token) {
-    throwBadRequestFieldError("fcm_token", "El token FCM es obligatorio");
-  }
 
   const device = await findByFirebaseUidAndToken(firebaseUid, fcm_token);
 
