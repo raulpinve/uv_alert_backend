@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middlewares.js";
-import { obtenerInformacionUv } from "../controllers/uv.controller.js";
+import { getUvInfo } from "../controllers/uv.controller.js";
 
 const router = Router();
 
-router.get("/", authenticateToken, obtenerInformacionUv);
+router.get("/", authenticateToken, getUvInfo);
 
 export default router;

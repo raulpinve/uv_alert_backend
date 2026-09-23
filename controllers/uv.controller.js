@@ -1,47 +1,45 @@
-import { obtenerUv } from "../repositories/uv.repository.js";
+import { getUv } from "../repositories/uv.repository.js";
 import { findByFirebaseUidAndToken } from "../repositories/device.repository.js";
 import { successResponse } from "../utils/response.utils.js";
 import {
-  obtenerRangoUV,
-  obtenerMensajeRecomendacion,
-} from "../utils/uvRango.util.js";
+  getUvRange,
+  getRecommendationMessage,
+} from "../utils/uvRange.utils.js";
 import {
   throwBadRequestFieldError,
   throwNotFoundError,
 } from "../errors/throwHTTPErrors.js";
 
-export async function obtenerInformacionUv(req, res) {
+export async function getUvInfo(req, res) {
   const firebaseUid = req.user.uid;
   const { fcm_token } = req.query;
 
   if (!fcm_token) {
-    throwBadRequestFieldError("fcm_token", "fcm_token es obligatorio");
+    throwBadRequestFieldError("fcm_token", "El token FCM es obligatorio");
   }
 
-  const dispositivo = await findByFirebaseUidAndToken(
-    firebaseUid,
-    fcm_token
-  );
+  const device = await findByFirebaseUidAndToken(firebaseUid, fcm_token);
 
-  if (!dispositivo) {
+  if (!device) {
     throwNotFoundError("Dispositivo no encontrado");
   }
 
-  const uv = await obtenerUv(dispositivo.latitud, dispositivo.longitud);
+  const uv = await getUv(device.latitude, device.longitude);
 
-  const rango = await obtenerRangoUV(uv.actual.uv);
+  const uvRange = await getUvRange(uv.current.uv);
 
-  const recomendacion = rango
+  const recommendation = uvRange
     ? {
-        rango_uv_id: rango.id,
-        nombre: rango.nombre,
-        mensaje: obtenerMensajeRecomendacion(rango.nombre),
+        uv_range_id: uvRange.id,
+        code: uvRange.code,
+        name: uvRange.name,
+        message: getRecommendationMessage(uvRange.code),
       }
     : null;
 
   return successResponse(res, 200, "Información UV obtenida correctamente", {
-    ciudad: dispositivo.ciudad,
+    city: device.city,
     ...uv,
-    recomendacion,
+    recommendation,
   });
 }

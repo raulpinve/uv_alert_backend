@@ -13,9 +13,9 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/devices", deviceRoutes);
+app.use("/uv", uvRoutes);
 
 /*
-app.use("/uv", uvRoutes);
 app.use("/tipos-piel", tiposPielRoutes);
 app.use("/usuarios", userRoutes);
 app.use(handleErrorResponse);*/
