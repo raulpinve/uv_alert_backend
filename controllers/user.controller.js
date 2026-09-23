@@ -10,10 +10,6 @@ export async function registerSkinType(req, res) {
   const firebaseUid = req.user.uid;
   const { skin_type_id } = req.body;
 
-  if (!skin_type_id) {
-    throwBadRequestFieldError("skin_type_id", "El tipo de piel es requerido");
-  }
-
   const skinType = await findSkinTypeById(skin_type_id);
   if (!skinType) {
     throwBadRequestFieldError(
