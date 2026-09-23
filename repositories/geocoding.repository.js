@@ -1,4 +1,4 @@
-export async function obtenerCiudad(latitud, longitud) {
+export async function getCity(latitud, longitud) {
   const url = new URL(
     "https://nominatim.openstreetmap.org/reverse"
   );

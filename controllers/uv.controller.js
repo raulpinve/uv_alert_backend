@@ -1,5 +1,5 @@
 import { obtenerUv } from "../repositories/uv.repository.js";
-import { obtenerDispositivoPorFirebaseUid } from "../repositories/dispositivo.repository.js";
+import { findByFirebaseUidAndToken } from "../repositories/device.repository.js";
 import { successResponse } from "../utils/response.utils.js";
 import {
   obtenerRangoUV,
@@ -18,7 +18,7 @@ export async function obtenerInformacionUv(req, res) {
     throwBadRequestFieldError("fcm_token", "fcm_token es obligatorio");
   }
 
-  const dispositivo = await obtenerDispositivoPorFirebaseUid(
+  const dispositivo = await findByFirebaseUidAndToken(
     firebaseUid,
     fcm_token
   );
