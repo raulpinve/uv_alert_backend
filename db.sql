@@ -79,3 +79,32 @@ EXCLUDE USING gist (numrange(valor_min, valor_max, '[]') WITH &&);
 ALTER TABLE dispositivos
 ADD CONSTRAINT fk_rango_uv
 FOREIGN KEY (rango_uv_id) REFERENCES rangos_uv(id);
+
+------------------------------
+---- Actualizar en servidor ---
+------------------------------
+
+CREATE TABLE tipos_piel (
+    id          SERIAL PRIMARY KEY,
+    escala      VARCHAR(10) NOT NULL,   
+    nombre      VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    factor_sensibilidad DECIMAL(3,2) NOT NULL DEFAULT 1.00
+);
+
+INSERT INTO tipos_piel (escala, nombre, descripcion, factor_sensibilidad) VALUES
+    ('I',   'Piel muy clara',   'Siempre se quema, nunca se broncea. Pecas frecuentes.', 2.50),
+    ('II',  'Piel clara',       'Se quema con facilidad, broncea mínimamente.',          2.00),
+    ('III', 'Piel media',       'Se quema moderadamente, broncea gradualmente.',         1.50),
+    ('IV',  'Piel morena clara','Se quema poco, broncea con facilidad.',                 1.00),
+    ('V',   'Piel morena',      'Rara vez se quema, se broncea intensamente.',           0.75),
+    ('VI',  'Piel oscura',      'Nunca se quema, muy pigmentada.',                       0.50); 
+
+ALTER TABLE usuarios
+ADD COLUMN tipo_piel_id INTEGER,
+ADD CONSTRAINT fk_usuarios_tipo_piel
+    FOREIGN KEY (tipo_piel_id)
+    REFERENCES tipos_piel(id)
+    ON DELETE SET NULL;
+
+CREATE INDEX idx_usuarios_tipo_piel_id ON usuarios(tipo_piel_id);

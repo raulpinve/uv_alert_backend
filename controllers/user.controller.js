@@ -1,67 +1,35 @@
-import { pool } from "../init.db.js";
 import { respuestaError, respuestaExitosa } from "../utils/response.utils.js";
+import { findById as findTipoPielById } from "../repositories/tiposPiel.repository.js";
+import { updateTipoPiel } from "../repositories/user.repository.js";
 
-export async function registrarUsuario(req, res) {
+export async function registrarTipoPiel(req, res) {
   try {
     const firebaseUid = req.user.uid;
-    const nombreCompleto = req.user.name;
+    const { tipo_piel_id } = req.body;
 
-    const partesNombre = nombreCompleto?.trim().split(/\s+/) || [];
+    if (!tipo_piel_id) {
+      return respuestaError(res, 400, "tipo_piel_id es requerido");
+    }
 
-    const nombre = partesNombre.shift() || null;
-    const apellidos = partesNombre.join(" ") || null;
+    const tipoPiel = await findTipoPielById(tipo_piel_id);
+    if (!tipoPiel) {
+      return respuestaError(res, 404, "tipo_piel_id no existe en el catálogo");
+    }
 
-    const { rows } = await pool.query(
-      `
-      INSERT INTO usuarios (
-        firebase_uid,
-        nombre,
-        apellidos
-      )
-      VALUES ($1, $2, $3)
-      ON CONFLICT (firebase_uid) DO NOTHING
-      RETURNING id, firebase_uid, nombre, apellidos, fecha_registro
-      `,
-      [firebaseUid, nombre, apellidos]
-    );
-
-    if (rows.length === 0) {
-      const { rows: usuario } = await pool.query(
-        `
-        SELECT
-          id,
-          firebase_uid,
-          nombre,
-          apellidos,
-          fecha_registro
-        FROM usuarios
-        WHERE firebase_uid = $1
-        `,
-        [firebaseUid]
-      );
-
-      return respuestaExitosa(
-        res,
-        200,
-        "Usuario ya registrado",
-        usuario[0]
-      );
+    const usuarioActualizado = await updateTipoPiel(firebaseUid, tipo_piel_id);
+    if (!usuarioActualizado) {
+      return respuestaError(res, 404, "Usuario no encontrado");
     }
 
     return respuestaExitosa(
       res,
-      201,
-      "Usuario registrado correctamente",
-      rows[0]
+      200,
+      "Tipo de piel registrado correctamente",
+      usuarioActualizado
     );
 
   } catch (error) {
-    console.error("Error al registrar usuario:", error);
-
-    return respuestaError(
-      res,
-      500,
-      "Error interno del servidor"
-    );
+    console.error("Error al registrar tipo de piel:", error);
+    return respuestaError(res, 500, "Error interno del servidor");
   }
 }

@@ -12,8 +12,6 @@ async function initDB() {
   try {
     const client = await pool.connect();
 
-    // console.log("Base de datos inicializada correctamente");
-
     client.release();
   } catch (error) {
     console.error("Error al inicializar la base de datos:", error);
