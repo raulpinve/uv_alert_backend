@@ -1,5 +1,5 @@
 import { successResponse } from "../utils/response.utils.js";
-import { findById as findSkinTypeById } from "../repositories/skinTypes.repository.js";
+import { findSkinTypeById } from "../repositories/skinTypes.repository.js";
 import { updateSkinType } from "../repositories/user.repository.js";
 import {
   throwBadRequestFieldError,

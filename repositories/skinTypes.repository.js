@@ -3,7 +3,7 @@ import { pool } from "../init.db.js";
 /**
  * Devuelve todo el catálogo de tipos de piel (escala Fitzpatrick).
  */
-export async function findAll() {
+export async function findAllSkinTypes() {
   const { rows } = await pool.query(
     `SELECT id, escala, nombre, descripcion, factor_sensibilidad
      FROM tipos_piel
@@ -15,7 +15,7 @@ export async function findAll() {
 /**
  * Busca un tipo de piel por id. Devuelve null si no existe.
  */
-export async function findById(id) {
+export async function findSkinTypeById(id) {
   const { rows } = await pool.query(
     `SELECT id, escala, nombre, descripcion, factor_sensibilidad
      FROM tipos_piel

@@ -1,4 +1,4 @@
-import { findAll } from "../repositories/skinTypes.repository.js";
+import { findAllSkinTypes } from "../repositories/skinTypes.repository.js";
 import { successResponse } from "../utils/response.utils.js";
 
 /**
@@ -6,7 +6,7 @@ import { successResponse } from "../utils/response.utils.js";
  * Returns the full catalog, useful to populate a selector in the app.
  */
 export async function listSkinTypes(req, res) {
-  const skinTypes = await findAll();
+  const skinTypes = await findAllSkinTypes();
 
   return successResponse(
     res,
