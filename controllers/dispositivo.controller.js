@@ -3,23 +3,19 @@ import {
   sincronizarDispositivo,
   eliminarDispositivoPorFirebaseUid
 } from "../repositories/dispositivo.repository.js";
-
+import { throwBadRequestError, throwNotFoundError } from "../errors/throwHTTPErrors.js";
 import {
   respuestaExitosa,
   respuestaError
 } from "../utils/response.utils.js";
 
-export async function sincronizar(req, res) {
+export async function sincronizar(req, res, next) {
   try {
     const firebaseUid = req.user.uid;
     const { fcm_token, latitud, longitud } = req.body;
 
     if (!fcm_token || latitud === undefined || longitud === undefined) {
-      return respuestaError(
-        res,
-        400,
-        "fcm_token, latitud y longitud son obligatorios"
-      );
+      throwBadRequestError("fcm_token, latitud y longitud son obligatorios");
     }
 
     const { rows } = await pool.query(
@@ -58,15 +54,11 @@ export async function sincronizar(req, res) {
   } catch (error) {
     console.error("Error al sincronizar dispositivo:", error);
 
-    return respuestaError(
-      res,
-      500,
-      "Error interno del servidor"
-    );
+   next(error);
   }
 }
 
-export async function desregistrar(req, res) {
+export async function desregistrar(req, res, next) {
   try {
     const firebaseUid = req.user.uid;
     const { fcm_token } = req.body;
@@ -92,11 +84,6 @@ export async function desregistrar(req, res) {
 
   } catch (error) {
     console.error("Error al desregistrar dispositivo:", error);
-
-    return respuestaError(
-      res,
-      500,
-      "Error interno del servidor"
-    );
+    next(error);
   }
 }
