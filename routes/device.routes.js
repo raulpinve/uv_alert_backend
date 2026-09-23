@@ -1,5 +1,10 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middlewares.js";
+import handleValidationErrors from "../middlewares/error.validators.middleware.js";
+import {
+  syncDeviceValidator,
+  unregisterDeviceValidator,
+} from "../validators/device.validators.js";
 import {
   syncDevice,
   unregisterDevice,
@@ -7,8 +12,20 @@ import {
 
 const router = Router();
 
-router.post("/", authenticateToken, syncDevice);
+router.post(
+  "/",
+  authenticateToken,
+  syncDeviceValidator,
+  handleValidationErrors,
+  syncDevice
+);
 
-router.delete("/", authenticateToken, unregisterDevice);
+router.delete(
+  "/",
+  authenticateToken,
+  unregisterDeviceValidator,
+  handleValidationErrors,
+  unregisterDevice
+);
 
 export default router;
