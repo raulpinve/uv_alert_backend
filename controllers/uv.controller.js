@@ -1,6 +1,6 @@
 import { obtenerUv } from "../repositories/uv.repository.js";
 import { obtenerDispositivoPorFirebaseUid } from "../repositories/dispositivo.repository.js";
-import { respuestaExitosa } from "../utils/response.utils.js";
+import { successResponse } from "../utils/response.utils.js";
 import {
   obtenerRangoUV,
   obtenerMensajeRecomendacion,
@@ -39,7 +39,7 @@ export async function obtenerInformacionUv(req, res) {
       }
     : null;
 
-  return respuestaExitosa(res, 200, "Información UV obtenida correctamente", {
+  return successResponse(res, 200, "Información UV obtenida correctamente", {
     ciudad: dispositivo.ciudad,
     ...uv,
     recomendacion,

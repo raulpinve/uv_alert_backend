@@ -9,7 +9,7 @@ import {
   throwNotFoundError,
   throwBadRequestMultiple,
 } from "../errors/throwHTTPErrors.js";
-import { respuestaExitosa } from "../utils/response.utils.js";
+import { successResponse } from "../utils/response.utils.js";
 
 export async function sincronizar(req, res) {
   const firebaseUid = req.user.uid;
@@ -52,7 +52,7 @@ export async function sincronizar(req, res) {
     longitud
   );
 
-  return respuestaExitosa(
+  return successResponse(
     res,
     200,
     "Dispositivo sincronizado correctamente",
@@ -70,5 +70,5 @@ export async function desregistrar(req, res) {
 
   await eliminarDispositivoPorFirebaseUid(firebaseUid, fcm_token);
 
-  return respuestaExitosa(res, 200, "Dispositivo desregistrado correctamente");
+  return successResponse(res, 200, "Dispositivo desregistrado correctamente");
 }

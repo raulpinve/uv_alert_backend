@@ -1,5 +1,5 @@
-import { findAll } from "../repositories/tiposPiel.repository.js";
-import { respuestaExitosa } from "../utils/response.utils.js";
+import { findAll } from "../repositories/skinTypes.repository.js";
+import { successResponse } from "../utils/response.utils.js";
 
 /**
  * GET /api/tipos-piel
@@ -8,7 +8,7 @@ import { respuestaExitosa } from "../utils/response.utils.js";
 export async function listarTiposPiel(req, res) {
   const tipos = await findAll();
 
-  return respuestaExitosa(
+  return successResponse(
     res,
     200,
     "Tipos de piel obtenidos correctamente",

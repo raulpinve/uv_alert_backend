@@ -11,12 +11,13 @@ const app = express();
 const port = process.env.PORT;
 app.use(express.json());
 
+/*
 app.use("/dispositivos", dispositivoRoutes);
 app.use("/usuarios", userRoutes);
 app.use("/uv", uvRoutes);
 app.use("/tipos-piel", tiposPielRoutes);
 app.use("/usuarios", userRoutes);
-app.use(handleErrorResponse);
+app.use(handleErrorResponse);*/
 
 // Iniciar el servidor
 app.listen(port, () => {

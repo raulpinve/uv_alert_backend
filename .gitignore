@@ -5,6 +5,7 @@ node_modules/
 .env
 .env.*
 !.env.example
+migration_rename_english.sql
 
 # Firebase credentials
 firebase-credentials.json
