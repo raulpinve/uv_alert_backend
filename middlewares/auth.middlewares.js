@@ -36,30 +36,26 @@ export async function authenticateToken(req, res, next) {
     //    Si ya existe, simplemente lo devuelve.
     const { rows } = await pool.query(
       `
-      INSERT INTO usuarios (
+      INSERT INTO users (
         firebase_uid,
-        nombre,
-        apellidos
+        first_name,
+        last_name
       )
       VALUES ($1, $2, $3)
 
       ON CONFLICT (firebase_uid)
       DO UPDATE SET
-        nombre = EXCLUDED.nombre,
-        apellidos = EXCLUDED.apellidos
+        first_name = EXCLUDED.first_name,
+        last_name = EXCLUDED.last_name
 
       RETURNING
         id,
         firebase_uid,
-        nombre,
-        apellidos,
-        fecha_registro
+        first_name,
+        last_name,
+        registered_at
       `,
-      [
-        firebaseUid,
-        nombre,
-        apellidos,
-      ]
+      [firebaseUid, nombre, apellidos]
     );
 
     // 4. Información de Firebase

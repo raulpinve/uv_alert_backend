@@ -5,7 +5,7 @@ import deviceRoutes from "./routes/device.routes.js";
 import uvRoutes from './routes/uv.routes.js'
 import tiposPielRoutes from "./routes/skinType.routes.js";
 import handleErrorResponse from "./errors/handleErrorResponse.js";
-import './jobs/Uvmonitor.cron.js';
+// import './jobs/uvMonitor.cron.js';
 
 const app = express();
 const port = process.env.PORT;

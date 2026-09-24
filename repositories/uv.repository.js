@@ -21,14 +21,14 @@ export async function getUv(latitude, longitude) {
   return {
     current: {
       uv: data.current.uv_index,
-      uv_clear_sky: data.current.uv_index_clear_sky,
+      uvClearSky: data.current.uv_index_clear_sky,
       time: data.current.time,
     },
 
     forecast: {
       hours: data.hourly.time,
       uv: data.hourly.uv_index,
-      uv_clear_sky: data.hourly.uv_index_clear_sky,
+      uvClearSky: data.hourly.uv_index_clear_sky,
     },
 
     timezone: data.timezone,

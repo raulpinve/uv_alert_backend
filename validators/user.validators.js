@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
 export const registerSkinTypeValidator = [
-  body("skin_type_id")
+  body("skinTypeId")
     .exists({ checkFalsy: true })
     .withMessage("El tipo de piel es requerido")
     .bail()

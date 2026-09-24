@@ -8,17 +8,17 @@ import {
 
 export async function registerSkinType(req, res) {
   const firebaseUid = req.user.uid;
-  const { skin_type_id } = req.body;
+  const { skinTypeId } = req.body;
 
-  const skinType = await findSkinTypeById(skin_type_id);
+  const skinType = await findSkinTypeById(skinTypeId);
   if (!skinType) {
     throwBadRequestFieldError(
-      "skin_type_id",
+      "skinTypeId",
       "El tipo de piel seleccionado no existe"
     );
   }
 
-  const updatedUser = await updateSkinType(firebaseUid, skin_type_id);
+  const updatedUser = await updateSkinType(firebaseUid, skinTypeId);
   if (!updatedUser) {
     throwNotFoundError("Usuario no encontrado");
   }

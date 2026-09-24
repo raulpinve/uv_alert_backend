@@ -1,3 +1,4 @@
+import camelcaseKeys from "camelcase-keys";
 import { pool } from "../init.db.js";
 
 /**
@@ -10,7 +11,7 @@ export async function findByFirebaseUid(firebaseUid) {
      WHERE firebase_uid = $1`,
     [firebaseUid]
   );
-  return rows[0] || null;
+  return rows[0] ? camelcaseKeys(rows[0]) : null;
 }
 
 /**
@@ -25,5 +26,5 @@ export async function updateSkinType(firebaseUid, skinTypeId) {
      RETURNING id, firebase_uid, first_name, last_name, skin_type_id`,
     [firebaseUid, skinTypeId]
   );
-  return rows[0] || null;
+  return rows[0] ? camelcaseKeys(rows[0]) : null;
 }

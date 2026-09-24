@@ -9,9 +9,9 @@ import { throwNotFoundError } from "../errors/throwHTTPErrors.js";
 
 export async function getUvInfo(req, res) {
   const firebaseUid = req.user.uid;
-  const { fcm_token } = req.query;
+  const { fcmToken } = req.query;
 
-  const device = await findByFirebaseUidAndToken(firebaseUid, fcm_token);
+  const device = await findByFirebaseUidAndToken(firebaseUid, fcmToken);
 
   if (!device) {
     throwNotFoundError("Dispositivo no encontrado");
@@ -23,7 +23,7 @@ export async function getUvInfo(req, res) {
 
   const recommendation = uvRange
     ? {
-        uv_range_id: uvRange.id,
+        uvRangeId: uvRange.id,
         code: uvRange.code,
         name: uvRange.name,
         message: getRecommendationMessage(uvRange.code),

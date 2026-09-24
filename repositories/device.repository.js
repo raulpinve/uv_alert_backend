@@ -1,3 +1,4 @@
+import camelcaseKeys from "camelcase-keys";
 import { pool } from "../init.db.js";
 import { calculateDistanceMeters } from "../utils/distance.utils.js";
 import { getCity } from "./geocoding.repository.js";
@@ -56,7 +57,7 @@ export async function syncDevice(userId, fcmToken, latitude, longitude) {
     [userId, fcmToken, latitude, longitude, city]
   );
 
-  return rows[0];
+  return camelcaseKeys(rows[0]);
 }
 
 async function findByToken(fcmToken) {
@@ -73,7 +74,7 @@ async function findByToken(fcmToken) {
     [fcmToken]
   );
 
-  return rows[0] ?? null;
+  return rows[0] ? camelcaseKeys(rows[0]) : null;
 }
 
 export async function findByFirebaseUidAndToken(firebaseUid, fcmToken) {
@@ -98,7 +99,7 @@ export async function findByFirebaseUidAndToken(firebaseUid, fcmToken) {
     [firebaseUid, fcmToken]
   );
 
-  return rows[0] ?? null;
+  return rows[0] ? camelcaseKeys(rows[0]) : null;
 }
 
 export async function deleteByFirebaseUid(firebaseUid, fcmToken) {

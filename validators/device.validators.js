@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
 export const syncDeviceValidator = [
-  body("fcm_token")
+  body("fcmToken")
     .exists({ checkFalsy: true })
     .withMessage("El token FCM es obligatorio")
     .bail()
@@ -24,7 +24,7 @@ export const syncDeviceValidator = [
 ];
 
 export const unregisterDeviceValidator = [
-  body("fcm_token")
+  body("fcmToken")
     .exists({ checkFalsy: true })
     .withMessage("El token FCM es obligatorio")
     .bail()

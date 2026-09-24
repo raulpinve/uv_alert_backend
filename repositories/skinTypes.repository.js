@@ -1,26 +1,21 @@
+import camelcaseKeys from "camelcase-keys";
 import { pool } from "../init.db.js";
 
-/**
- * Devuelve todo el catálogo de tipos de piel (escala Fitzpatrick).
- */
 export async function findAllSkinTypes() {
   const { rows } = await pool.query(
-    `SELECT id, escala, nombre, descripcion, factor_sensibilidad
-     FROM tipos_piel
+    `SELECT id, scale, name, description, sensitivity_factor
+     FROM skin_types
      ORDER BY id`
   );
-  return rows;
+  return camelcaseKeys(rows);
 }
 
-/**
- * Busca un tipo de piel por id. Devuelve null si no existe.
- */
 export async function findSkinTypeById(id) {
   const { rows } = await pool.query(
-    `SELECT id, escala, nombre, descripcion, factor_sensibilidad
-     FROM tipos_piel
+    `SELECT id, scale, name, description, sensitivity_factor
+     FROM skin_types
      WHERE id = $1`,
     [id]
   );
-  return rows[0] || null;
+  return rows[0] ? camelcaseKeys(rows[0]) : null;
 }

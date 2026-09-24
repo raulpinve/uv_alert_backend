@@ -8,14 +8,14 @@ import { successResponse } from "../utils/response.utils.js";
 
 export async function syncDevice(req, res) {
   const firebaseUid = req.user.uid;
-  const { fcm_token, latitude, longitude } = req.body;
+  const { fcmToken, latitude, longitude } = req.body;
 
   const user = await findByFirebaseUid(firebaseUid);
   if (!user) {
     throwNotFoundError("Usuario no encontrado");
   }
 
-  const device = await syncDeviceInDb(user.id, fcm_token, latitude, longitude);
+  const device = await syncDeviceInDb(user.id, fcmToken, latitude, longitude);
 
   return successResponse(
     res,
@@ -27,9 +27,9 @@ export async function syncDevice(req, res) {
 
 export async function unregisterDevice(req, res) {
   const firebaseUid = req.user.uid;
-  const { fcm_token } = req.body;
+  const { fcmToken } = req.body;
 
-  await deleteByFirebaseUid(firebaseUid, fcm_token);
+  await deleteByFirebaseUid(firebaseUid, fcmToken);
 
   return successResponse(res, 200, "Dispositivo desregistrado correctamente");
 }
