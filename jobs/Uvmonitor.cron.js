@@ -89,21 +89,22 @@ async function processDevice(device) {
 }
 
 // UV monitoring cron job
+let isRunning = false;
+
 async function runUvMonitorJob() {
+  if (isRunning) {
+    console.warn("Previous run still in progress, skipping this tick.");
+    return;
+  }
+  isRunning = true;
+
   console.log("Starting UV monitoring cron job...");
 
   try {
-    const { rows: devices } = await pool.query(
-      `
-      SELECT
-        id,
-        latitude,
-        longitude,
-        fcm_token,
-        uv_range_id
+    const { rows: devices } = await pool.query(`
+      SELECT id, latitude, longitude, fcm_token, uv_range_id
       FROM devices
-      `
-    );
+    `);
 
     console.log(`Processing ${devices.length} device(s)...`);
 
@@ -114,6 +115,8 @@ async function runUvMonitorJob() {
     console.log("Cron job finished.");
   } catch (error) {
     console.error(`General error in cron job: ${error.message}`);
+  } finally {
+    isRunning = false;
   }
 }
 
