@@ -8,22 +8,23 @@ import {
 
 export async function updateProfile(req, res) {
   const firebaseUid = req.user.uid;
-  const { firstName, lastName, skinType } = req.body;
+  const { firstName, lastName, skinTypeId } = req.body;
 
-  if (skinType !== undefined) {
-    const skinTypeRow = await findSkinTypeById(skinType);
+  const fields = {};
+
+  if (firstName !== undefined) fields.firstName = firstName;
+  if (lastName !== undefined) fields.lastName = lastName;
+
+  if (skinTypeId !== undefined) {
+    const skinTypeRow = await findSkinTypeById(skinTypeId);
     if (!skinTypeRow) {
       throwBadRequestFieldError(
-        "skinType",
+        "skinTypeId",
         "El tipo de piel seleccionado no existe"
       );
     }
+    fields.skinTypeId = skinTypeId;
   }
-
-  const fields = {};
-  if (firstName !== undefined) fields.firstName = firstName;
-  if (lastName !== undefined) fields.lastName = lastName;
-  if (skinType !== undefined) fields.skinTypeId = skinType;
 
   if (Object.keys(fields).length === 0) {
     throwBadRequestFieldError("body", "No se enviaron campos para actualizar");

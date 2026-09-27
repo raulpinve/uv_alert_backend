@@ -15,15 +15,18 @@ export const updateProfileValidator = [
     .optional()
     .isString().withMessage("El nombre debe ser un texto")
     .trim()
-    .notEmpty().withMessage("El nombre no puede estar vacío"),
+    .notEmpty().withMessage("El nombre no puede estar vacío")
+    .isLength({ max: 100 }).withMessage("El nombre es demasiado largo"),
 
   body("lastName")
     .optional()
     .isString().withMessage("El apellido debe ser un texto")
-    .trim(),
+    .trim()
+    .notEmpty().withMessage("El apellido no puede estar vacío")
+    .isLength({ max: 100 }).withMessage("El apellido es demasiado largo"),
 
-  body("skinType")
+  body("skinTypeId")
     .optional()
-    .isInt({ min: 1 }).withMessage("skinType debe ser un número entero válido")
+    .isInt({ gt: 0 }).withMessage("El tipo de piel debe ser un identificador válido")
     .toInt(),
 ];

@@ -44,7 +44,7 @@ export async function findByFirebaseUid(firebaseUid) {
           scale: skinTypeScale,
           name: skinTypeName,
           description: skinTypeDescription,
-          sensitivityFactor: skinTypeSensitivityFactor,
+          sensitivityFactor: Number(skinTypeSensitivityFactor),
         }
       : null,
   };
