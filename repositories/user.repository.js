@@ -6,25 +6,80 @@ import { pool } from "../init.db.js";
  */
 export async function findByFirebaseUid(firebaseUid) {
   const { rows } = await pool.query(
-    `SELECT id, firebase_uid, first_name, last_name, skin_type_id, registered_at
-     FROM users
-     WHERE firebase_uid = $1`,
+    `SELECT
+       u.id,
+       u.firebase_uid,
+       u.first_name,
+       u.last_name,
+       u.registered_at,
+       st.id AS skin_type_id,
+       st.scale AS skin_type_scale,
+       st.name AS skin_type_name,
+       st.description AS skin_type_description,
+       st.sensitivity_factor AS skin_type_sensitivity_factor
+     FROM users u
+     LEFT JOIN skin_types st ON st.id = u.skin_type_id
+     WHERE u.firebase_uid = $1`,
     [firebaseUid]
   );
-  return rows[0] ? camelcaseKeys(rows[0]) : null;
+
+  if (!rows[0]) return null;
+
+  const row = camelcaseKeys(rows[0]);
+
+  const {
+    skinTypeId,
+    skinTypeScale,
+    skinTypeName,
+    skinTypeDescription,
+    skinTypeSensitivityFactor,
+    ...user
+  } = row;
+
+  return {
+    ...user,
+    skinType: skinTypeId
+      ? {
+          id: skinTypeId,
+          scale: skinTypeScale,
+          name: skinTypeName,
+          description: skinTypeDescription,
+          sensitivityFactor: skinTypeSensitivityFactor,
+        }
+      : null,
+  };
 }
 
 /**
- * Updates (registers) a user's skin type, identified by firebase_uid.
+ * Updates one or more profile fields for a user, identified by firebase_uid.
+ * Accepts: { firstName, lastName, skinTypeId }
  * Returns the updated user, or null if the user does not exist.
  */
-export async function updateSkinType(firebaseUid, skinTypeId) {
+export async function updateUserProfile(firebaseUid, fields) {
+  const columnMap = {
+    firstName: "first_name",
+    lastName: "last_name",
+    skinTypeId: "skin_type_id",
+  };
+
+  const setClauses = [];
+  const values = [];
+  let i = 1;
+
+  for (const [key, value] of Object.entries(fields)) {
+    const column = columnMap[key];
+    if (!column) continue;
+    setClauses.push(`${column} = $${++i}`);
+    values.push(value);
+  }
+
   const { rows } = await pool.query(
     `UPDATE users
-     SET skin_type_id = $2
+     SET ${setClauses.join(", ")}
      WHERE firebase_uid = $1
      RETURNING id, firebase_uid, first_name, last_name, skin_type_id`,
-    [firebaseUid, skinTypeId]
+    [firebaseUid, ...values]
   );
+
   return rows[0] ? camelcaseKeys(rows[0]) : null;
 }

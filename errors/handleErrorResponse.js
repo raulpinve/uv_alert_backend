@@ -2,6 +2,7 @@ import handleHTTPThrowErrors from "./handleHTTPThrowErrors.js";
 
 const handleErrorResponse = (err, req, res, next) => {
   let errorObject;
+  console.error("Error:", err);
 
 
   if (err.type === "entity.parse.failed") {
@@ -81,7 +82,6 @@ const handleErrorResponse = (err, req, res, next) => {
       break;
 
     default:
-      console.error("Error no controlado:", err);
       errorObject = handleHTTPThrowErrors.handleDefaultErrorResponse();
       break;
   }

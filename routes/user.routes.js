@@ -1,17 +1,23 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middlewares.js";
 import handleValidationErrors from "../middlewares/error.validators.middleware.js";
-import { registerSkinTypeValidator } from "../validators/user.validators.js";
-import { registerSkinType } from "../controllers/user.controller.js";
+import { updateProfileValidator } from "../validators/user.validators.js";
+import { getUserInfo, updateProfile } from "../controllers/user.controller.js";
 
 const router = Router();
 
+router.get(
+  "/me", 
+  authenticateToken, 
+  getUserInfo
+);
+
 router.patch(
-  "/skin-type",
+  "/me",
   authenticateToken,
-  registerSkinTypeValidator,
+  updateProfileValidator,
   handleValidationErrors,
-  registerSkinType
+  updateProfile
 );
 
 export default router;

@@ -1,24 +1,35 @@
 import { successResponse } from "../utils/response.utils.js";
 import { findSkinTypeById } from "../repositories/skinTypes.repository.js";
-import { updateSkinType } from "../repositories/user.repository.js";
+import { findByFirebaseUid, updateUserProfile } from "../repositories/user.repository.js";
 import {
   throwBadRequestFieldError,
   throwNotFoundError,
 } from "../errors/throwHTTPErrors.js";
 
-export async function registerSkinType(req, res) {
+export async function updateProfile(req, res) {
   const firebaseUid = req.user.uid;
-  const { skinTypeId } = req.body;
+  const { firstName, lastName, skinType } = req.body;
 
-  const skinType = await findSkinTypeById(skinTypeId);
-  if (!skinType) {
-    throwBadRequestFieldError(
-      "skinTypeId",
-      "El tipo de piel seleccionado no existe"
-    );
+  if (skinType !== undefined) {
+    const skinTypeRow = await findSkinTypeById(skinType);
+    if (!skinTypeRow) {
+      throwBadRequestFieldError(
+        "skinType",
+        "El tipo de piel seleccionado no existe"
+      );
+    }
   }
 
-  const updatedUser = await updateSkinType(firebaseUid, skinTypeId);
+  const fields = {};
+  if (firstName !== undefined) fields.firstName = firstName;
+  if (lastName !== undefined) fields.lastName = lastName;
+  if (skinType !== undefined) fields.skinTypeId = skinType;
+
+  if (Object.keys(fields).length === 0) {
+    throwBadRequestFieldError("body", "No se enviaron campos para actualizar");
+  }
+
+  const updatedUser = await updateUserProfile(firebaseUid, fields);
   if (!updatedUser) {
     throwNotFoundError("Usuario no encontrado");
   }
@@ -26,7 +37,23 @@ export async function registerSkinType(req, res) {
   return successResponse(
     res,
     200,
-    "Tipo de piel registrado correctamente",
+    "Perfil actualizado correctamente",
     updatedUser
+  );
+}
+
+export async function getUserInfo(req, res) {
+  const { uid } = req.user;
+  const user = await findByFirebaseUid(uid);
+
+  if (!user) {
+    throwNotFoundError("Usuario no encontrado");
+  }
+
+  return successResponse(
+    res,
+    200,
+    "Información del usuario obtenida correctamente",
+    user
   );
 }

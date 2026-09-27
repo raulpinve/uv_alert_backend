@@ -65,4 +65,6 @@ export async function getUvInfo(req, res) {
     recommendation,
     exposure,
   });
+
+  
 }

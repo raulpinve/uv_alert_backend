@@ -4,37 +4,41 @@ import { pool } from "../init.db.js";
 
 export async function authenticateToken(req, res, next) {
   try {
-    /*
+    let firebaseUid;
+    let nombre;
+    let apellidos;
 
-    const authHeader = req.headers.authorization;
+    if (process.env.MOCK_AUTH === "true") {
+      // --- MOCK: solo para desarrollo local ---
+      firebaseUid = "mock-uid-123";
+      nombre = "Usuario";
+      apellidos = "De Prueba";
+    } else {
+      const authHeader = req.headers.authorization;
 
-    if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({
-        error: "Token no proporcionado",
-      });
+      if (!authHeader?.startsWith("Bearer ")) {
+        return res.status(401).json({
+          error: "Token no proporcionado",
+        });
+      }
+
+      const token = authHeader.split("Bearer ")[1];
+      // 1. Verificar token de Firebase
+      const decodedToken = await getAuth(app).verifyIdToken(token);
+
+      firebaseUid = decodedToken.uid;
+      const nombreCompleto = decodedToken.name ?? "";
+
+      // 2. Separar nombre y apellidos
+      const partesNombre = nombreCompleto.trim().split(/\s+/);
+
+      nombre = partesNombre.shift() || "Usuario";
+      apellidos = partesNombre.join(" ") || null;
     }
-
-    const token = authHeader.split("Bearer ")[1];
-    // 1. Verificar token de Firebase
-    const decodedToken = await getAuth(app).verifyIdToken(token);
-
-    const firebaseUid = decodedToken.uid;
-    const nombreCompleto = decodedToken.name ?? "";
-
-    // 2. Separar nombre y apellidos
-    const partesNombre = nombreCompleto.trim().split(/\s+/);
-
-    const nombre = partesNombre.shift() || "Usuario";
-    const apellidos = partesNombre.join(" ") || null;
-
-    */
-    const firebaseUid = `vBj5rH9KSHRutGPacupSOYPoOYq1`;
-    const nombre = "Usuario";
-    const apellidos = null;
 
     // 3. Crear usuario si no existe
     //    Si ya existe, simplemente lo devuelve.
-    const { rows } = await pool.query(
+    await pool.query(
       `
       INSERT INTO users (
         firebase_uid,
@@ -59,14 +63,12 @@ export async function authenticateToken(req, res, next) {
     );
 
     // 4. Información de Firebase
-    // req.user = decodedToken;
     req.user = {
-      uid: firebaseUid
-    }
+      uid: firebaseUid,
+    };
 
-    // 6. Continuar
+    // 5. Continuar
     next();
-
   } catch (error) {
     console.error("Error en authenticateToken:", error);
 
@@ -75,17 +77,3 @@ export async function authenticateToken(req, res, next) {
     });
   }
 }
-
-// export function authenticateToken(req, res, next) {
-//   req.user = {
-//     uid: "google-user-123",
-//     email: "prueba@gmail.com",
-//     email_verified: true,
-//     name: "Usuario Prueba",
-//     firebase: {
-//       sign_in_provider: "google.com",
-//     },
-//   };
-
-//   next();
-// }
