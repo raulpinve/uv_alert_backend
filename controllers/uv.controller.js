@@ -41,22 +41,18 @@ export async function getUvInfo(req, res) {
 
   let exposure = null;
 
-  if (user.skinTypeId) {
-    const skinType = await findSkinTypeById(user.skinTypeId);
+  if (user.skinType) {
+    const minutes = getRecommendedExposureMinutes(
+      uv.current.uv,
+      user.skinType.scale
+    );
 
-    if (skinType) {
-      const minutes = getRecommendedExposureMinutes(
-        uv.current.uv,
-        skinType.scale
-      );
-
-      exposure = {
-        skinTypeId: skinType.id,
-        skinTypeName: skinType.name,
-        minutes,
-        message: getExposureMessage(minutes),
-      };
-    }
+    exposure = {
+      skinTypeId: user.skinType.id,
+      skinTypeName: user.skinType.name,
+      minutes,
+      message: getExposureMessage(minutes),
+    };
   }
 
   return successResponse(res, 200, "Información UV obtenida correctamente", {

@@ -50,8 +50,8 @@ export function getExposureMessage(minutes) {
   }
 
   if (minutes >= MAX_RECOMMENDED_MINUTES) {
-    return `Puedes estar expuesto más de ${MAX_RECOMMENDED_MINUTES} minutos, pero se recomienda usar protector solar igualmente.`;
+    return "Puedes estar expuesto un tiempo prolongado, pero se recomienda usar protector solar igualmente.";
   }
 
-  return `Tiempo de exposición segura estimado: ${minutes} minutos sin protección.`;
+  return "Tiempo de exposición segura estimado sin protección.";
 }
