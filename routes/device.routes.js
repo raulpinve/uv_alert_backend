@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateToken } from "../middlewares/auth.middlewares.js";
+import { verifyFirebaseToken } from "../middlewares/auth.middlewares.js";
 import handleValidationErrors from "../middlewares/error.validators.middleware.js";
 import {
   syncDeviceValidator,
@@ -14,7 +14,7 @@ const router = Router();
 
 router.post(
   "/",
-  authenticateToken,
+  verifyFirebaseToken,
   syncDeviceValidator,
   handleValidationErrors,
   syncDevice
@@ -22,7 +22,7 @@ router.post(
 
 router.delete(
   "/",
-  authenticateToken,
+  verifyFirebaseToken,
   unregisterDeviceValidator,
   handleValidationErrors,
   unregisterDevice

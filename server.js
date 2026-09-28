@@ -5,6 +5,7 @@ import deviceRoutes from "./routes/device.routes.js";
 import uvRoutes from './routes/uv.routes.js'
 import tiposPielRoutes from "./routes/skinType.routes.js";
 import handleErrorResponse from "./errors/handleErrorResponse.js";
+import authRoutes from "./routes/auht.routes.js";
 // import './jobs/uvMonitor.cron.js';
 
 const app = express();
@@ -15,6 +16,8 @@ app.use("/users", userRoutes);
 app.use("/devices", deviceRoutes);
 app.use("/uv", uvRoutes);
 app.use("/skin-type", tiposPielRoutes);
+app.use("/auth", authRoutes);
+
 app.use(handleErrorResponse)
 
 // Iniciar el servidor

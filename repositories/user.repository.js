@@ -83,3 +83,16 @@ export async function updateUserProfile(firebaseUid, fields) {
 
   return rows[0] ? camelcaseKeys(rows[0]) : null;
 }
+
+/**
+ * Creates a user if it doesn't already exist (idempotente).
+ * Se usa en el flujo de sincronización post-login.
+ */
+export async function createUserIfNotExists(firebaseUid, firstName, lastName) {
+  await pool.query(
+    `INSERT INTO users (firebase_uid, first_name, last_name)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (firebase_uid) DO NOTHING`,
+    [firebaseUid, firstName, lastName]
+  );
+}

@@ -34,22 +34,23 @@ INSERT INTO uv_ranges (code, name, min_value, max_value) VALUES
 
 -- ============================================
 -- Table: skin_types (catalog)
+-- `med_j_m2` = minimal erythema dose (J/m²)
 -- ============================================
 CREATE TABLE skin_types (
-    id                  SERIAL PRIMARY KEY,
-    scale               VARCHAR(10)  NOT NULL,
-    name                VARCHAR(100) NOT NULL,
-    description         TEXT,
-    sensitivity_factor  DECIMAL(3,2) NOT NULL DEFAULT 1.00
+    id          SERIAL PRIMARY KEY,
+    scale       VARCHAR(10)  NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    description TEXT,
+    med_j_m2    INTEGER      NOT NULL
 );
 
-INSERT INTO skin_types (scale, name, description, sensitivity_factor) VALUES
-    ('I',   'Piel muy clara',    'Siempre se quema, nunca se broncea. Pecas frecuentes.', 2.50),
-    ('II',  'Piel clara',        'Se quema con facilidad, broncea mínimamente.',          2.00),
-    ('III', 'Piel media',        'Se quema moderadamente, broncea gradualmente.',         1.50),
-    ('IV',  'Piel morena clara', 'Se quema poco, broncea con facilidad.',                 1.00),
-    ('V',   'Piel morena',       'Rara vez se quema, se broncea intensamente.',           0.75),
-    ('VI',  'Piel oscura',       'Nunca se quema, muy pigmentada.',                       0.50);
+INSERT INTO skin_types (scale, name, description, med_j_m2) VALUES
+    ('I',   'Piel muy clara',    'Siempre se quema, nunca se broncea. Pecas frecuentes.', 200),
+    ('II',  'Piel clara',        'Se quema con facilidad, broncea mínimamente.',          250),
+    ('III', 'Piel media',        'Se quema moderadamente, broncea gradualmente.',         300),
+    ('IV',  'Piel morena clara', 'Se quema poco, broncea con facilidad.',                 450),
+    ('V',   'Piel morena',       'Rara vez se quema, se broncea intensamente.',           600),
+    ('VI',  'Piel oscura',       'Nunca se quema, muy pigmentada.',                      1000);
 
 -- ============================================
 -- Table: users
@@ -101,22 +102,6 @@ CREATE TABLE devices (
         UNIQUE (fcm_token)
 );
 
--- Useful indexes for the cronjob (iterating devices) and lookups by user
+-- For the cronjob (iterating devices) and lookups by user
 CREATE INDEX idx_devices_user_id     ON devices(user_id);
 CREATE INDEX idx_devices_uv_range_id ON devices(uv_range_id);
-
-
-ALTER TABLE skin_types ADD COLUMN med_j_m2 INTEGER;
-
-UPDATE skin_types SET med_j_m2 = CASE scale
-  WHEN 'I'   THEN 200
-  WHEN 'II'  THEN 250
-  WHEN 'III' THEN 300
-  WHEN 'IV'  THEN 450
-  WHEN 'V'   THEN 600
-  WHEN 'VI'  THEN 1000
-END;
-
-ALTER TABLE skin_types ALTER COLUMN med_j_m2 SET NOT NULL;
-
-ALTER TABLE skin_types DROP COLUMN sensitivity_factor;

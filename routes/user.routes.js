@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateToken } from "../middlewares/auth.middlewares.js";
+import { verifyFirebaseToken } from "../middlewares/auth.middlewares.js";
 import handleValidationErrors from "../middlewares/error.validators.middleware.js";
 import { updateProfileValidator } from "../validators/user.validators.js";
 import { getUserInfo, updateProfile } from "../controllers/user.controller.js";
@@ -8,13 +8,13 @@ const router = Router();
 
 router.get(
   "/me", 
-  authenticateToken, 
+  verifyFirebaseToken, 
   getUserInfo
 );
 
 router.patch(
   "/me",
-  authenticateToken,
+  verifyFirebaseToken,
   updateProfileValidator,
   handleValidationErrors,
   updateProfile
