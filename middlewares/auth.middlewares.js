@@ -2,6 +2,31 @@ import { getAuth } from "firebase-admin/auth";
 import { app } from "../config/firebase.js";
 import { pool } from "../init.db.js";
 
+// uids que ya sabemos que existen en la BD (cache en memoria).
+const knownUsers = new Set();
+
+async function ensureUserExists(firebaseUid, nombre, apellidos) {
+  if (knownUsers.has(firebaseUid)) return;
+
+  const { rowCount } = await pool.query(
+    "SELECT 1 FROM users WHERE firebase_uid = $1",
+    [firebaseUid]
+  );
+
+  if (rowCount === 0) {
+    await pool.query(
+      `
+      INSERT INTO users (firebase_uid, first_name, last_name)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (firebase_uid) DO NOTHING
+      `,
+      [firebaseUid, nombre, apellidos]
+    );
+  }
+
+  knownUsers.add(firebaseUid);
+}
+
 export async function authenticateToken(req, res, next) {
   try {
     let firebaseUid;
@@ -23,6 +48,7 @@ export async function authenticateToken(req, res, next) {
       }
 
       const token = authHeader.split("Bearer ")[1];
+
       // 1. Verificar token de Firebase
       const decodedToken = await getAuth(app).verifyIdToken(token);
 
@@ -36,31 +62,8 @@ export async function authenticateToken(req, res, next) {
       apellidos = partesNombre.join(" ") || null;
     }
 
-    // 3. Crear usuario si no existe
-    //    Si ya existe, simplemente lo devuelve.
-    await pool.query(
-      `
-      INSERT INTO users (
-        firebase_uid,
-        first_name,
-        last_name
-      )
-      VALUES ($1, $2, $3)
-
-      ON CONFLICT (firebase_uid)
-      DO UPDATE SET
-        first_name = EXCLUDED.first_name,
-        last_name = EXCLUDED.last_name
-
-      RETURNING
-        id,
-        firebase_uid,
-        first_name,
-        last_name,
-        registered_at
-      `,
-      [firebaseUid, nombre, apellidos]
-    );
+    // 3. Crear el usuario solo si no existe (y solo una vez por uid)
+    await ensureUserExists(firebaseUid, nombre, apellidos);
 
     // 4. Información de Firebase
     req.user = {
