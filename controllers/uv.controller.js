@@ -1,7 +1,6 @@
 import { getUv } from "../repositories/uv.repository.js";
 import { findByFirebaseUidAndToken } from "../repositories/device.repository.js";
 import { findByFirebaseUid } from "../repositories/user.repository.js";
-import { findSkinTypeById } from "../repositories/skinTypes.repository.js";
 import { successResponse } from "../utils/response.utils.js";
 import {
   getUvRange,
@@ -18,14 +17,10 @@ export async function getUvInfo(req, res) {
   const { fcmToken } = req.query;
 
   const device = await findByFirebaseUidAndToken(firebaseUid, fcmToken);
-  if (!device) {
-    throwNotFoundError("Dispositivo no encontrado");
-  }
+  if (!device) throwNotFoundError("Dispositivo no encontrado");
 
   const user = await findByFirebaseUid(firebaseUid);
-  if (!user) {
-    throwNotFoundError("Usuario no encontrado");
-  }
+  if (!user) throwNotFoundError("Usuario no encontrado");
 
   const uv = await getUv(device.latitude, device.longitude);
   const uvRange = await getUvRange(uv.current.uv);
@@ -44,7 +39,7 @@ export async function getUvInfo(req, res) {
   if (user.skinType) {
     const minutes = getRecommendedExposureMinutes(
       uv.current.uv,
-      user.skinType.scale
+      user.skinType.medJm2
     );
 
     exposure = {
@@ -61,6 +56,4 @@ export async function getUvInfo(req, res) {
     recommendation,
     exposure,
   });
-
-  
 }

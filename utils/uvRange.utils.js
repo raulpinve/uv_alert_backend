@@ -3,45 +3,38 @@ import { pool } from "../init.db.js";
 // Keyed by uv_ranges.code (stable, English). Values are user-facing (Spanish).
 export const MESSAGES_BY_RANGE = {
   NONE: [
-    "No hay radiación UV en este momento.",
-    "El índice UV está en cero por ahora.",
-    "Sin radiación UV por el momento, no necesitas protección.",
+    "No necesitas protección por ahora.",
+    "Sin radiación UV en este momento.",
   ],
 
   LOW: [
-    "La radiación UV es baja. Puedes salir con tranquilidad.",
-    "El índice UV está bajo, no necesitas precauciones especiales.",
-    "UV baja por ahora. Puedes disfrutar del exterior sin preocuparte.",
+    "Puedes salir con tranquilidad.",
+    "No necesitas precauciones especiales.",
   ],
 
   MODERATE: [
-    "La radiación UV es moderada. Usa bloqueador si vas a estar afuera un rato.",
-    "El índice UV está subiendo. Aplica bloqueador antes de salir.",
-    "UV moderada: no olvides el bloqueador si te vas a exponer al sol.",
+    "Usa bloqueador si vas a estar afuera.",
+    "Aplica bloqueador antes de salir.",
   ],
 
   HIGH: [
-    "La radiación UV es alta, incluso con nubes. Usa bloqueador y busca sombra cuando puedas.",
-    "El índice UV está alto. Aplica bloqueador y evita el sol directo por periodos largos.",
-    "UV alta: aplica bloqueador antes de salir y busca sombra cuando puedas.",
+    "Usa bloqueador y busca sombra.",
+    "Aplica bloqueador y evita el sol directo.",
   ],
 
   VERY_HIGH: [
-    "La radiación UV es muy alta, aunque esté nublado. Usa bloqueador y busca sombra.",
-    "El índice UV está muy alto. Evita el sol directo y aplica bloqueador.",
-    "UV muy alta: evita exponerte mucho tiempo sin protección.",
+    "Usa bloqueador y busca sombra.",
+    "Evita el sol directo y aplica bloqueador.",
   ],
 
   EXTREME: [
-    "La radiación UV es extrema. Usa bloqueador, busca sombra y evita el sol directo.",
-    "El índice UV está en nivel extremo. Protégete bien si vas a salir.",
-    "UV extrema: aplica bloqueador y limita tu exposición al sol.",
+    "Evita el sol directo y usa bloqueador.",
+    "Protégete bien si vas a salir.",
   ],
 
   EXTREME_HIGH: [
-    "La radiación UV está en su nivel máximo. Evita el sol directo y usa protección completa.",
-    "El índice UV es extremadamente alto. Busca sombra y usa bloqueador.",
-    "UV en el nivel más alto: evita exponerte al sol sin protección.",
+    "Evita el sol directo. Usa protección total.",
+    "Busca sombra y usa bloqueador.",
   ],
 };
 
@@ -64,7 +57,7 @@ export async function getUvRange(uvValue) {
     `
     SELECT id, code, name, min_value
     FROM uv_ranges
-    WHERE $1 BETWEEN min_value AND max_value
+    WHERE min_value <= $1
     ORDER BY min_value DESC
     LIMIT 1
     `,

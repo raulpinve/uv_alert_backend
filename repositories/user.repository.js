@@ -16,7 +16,7 @@ export async function findByFirebaseUid(firebaseUid) {
        st.scale AS skin_type_scale,
        st.name AS skin_type_name,
        st.description AS skin_type_description,
-       st.sensitivity_factor AS skin_type_sensitivity_factor
+       st.med_j_m2 AS skin_type_med_j_m2
      FROM users u
      LEFT JOIN skin_types st ON st.id = u.skin_type_id
      WHERE u.firebase_uid = $1`,
@@ -32,7 +32,7 @@ export async function findByFirebaseUid(firebaseUid) {
     skinTypeScale,
     skinTypeName,
     skinTypeDescription,
-    skinTypeSensitivityFactor,
+    skinTypeMedJM2,
     ...user
   } = row;
 
@@ -44,7 +44,7 @@ export async function findByFirebaseUid(firebaseUid) {
           scale: skinTypeScale,
           name: skinTypeName,
           description: skinTypeDescription,
-          sensitivityFactor: Number(skinTypeSensitivityFactor),
+          medJm2: skinTypeMedJM2,
         }
       : null,
   };

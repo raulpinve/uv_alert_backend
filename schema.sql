@@ -104,3 +104,19 @@ CREATE TABLE devices (
 -- Useful indexes for the cronjob (iterating devices) and lookups by user
 CREATE INDEX idx_devices_user_id     ON devices(user_id);
 CREATE INDEX idx_devices_uv_range_id ON devices(uv_range_id);
+
+
+ALTER TABLE skin_types ADD COLUMN med_j_m2 INTEGER;
+
+UPDATE skin_types SET med_j_m2 = CASE scale
+  WHEN 'I'   THEN 200
+  WHEN 'II'  THEN 250
+  WHEN 'III' THEN 300
+  WHEN 'IV'  THEN 450
+  WHEN 'V'   THEN 600
+  WHEN 'VI'  THEN 1000
+END;
+
+ALTER TABLE skin_types ALTER COLUMN med_j_m2 SET NOT NULL;
+
+ALTER TABLE skin_types DROP COLUMN sensitivity_factor;

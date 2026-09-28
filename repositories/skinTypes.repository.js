@@ -3,7 +3,7 @@ import { pool } from "../init.db.js";
 
 export async function findAllSkinTypes() {
   const { rows } = await pool.query(
-    `SELECT id, scale, name, description, sensitivity_factor
+    `SELECT id, scale, name, description, med_j_m2
      FROM skin_types
      ORDER BY id`
   );
@@ -12,7 +12,7 @@ export async function findAllSkinTypes() {
 
 export async function findSkinTypeById(id) {
   const { rows } = await pool.query(
-    `SELECT id, scale, name, description, sensitivity_factor
+    `SELECT id, scale, name, description, med_j_m2
      FROM skin_types
      WHERE id = $1`,
     [id]
