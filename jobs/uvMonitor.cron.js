@@ -48,6 +48,12 @@ async function sendNotification(fcmToken, newRange, uvValue, medJm2) {
       title: notificationTitle,
       body: `Está en ${uvValue}. ${tipMessage}${exposureLine}`,
     },
+    android: {
+      notification: {
+        icon: "ic_stat_zenit", // nombre del drawable, sin extensión
+        color: "#2F8BE6",
+      },
+    },
     data: {
       current_uv: String(uvValue),
       uv_range_id: String(newRange.id),

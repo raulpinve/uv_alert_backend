@@ -100,10 +100,10 @@ main()
   .then(async () => {
     console.log("Ejecución manual terminada.");
     await pool.end();
-    process.exit(0);
+    process.exitCode = 0;
   })
   .catch(async (err) => {
     console.error("Falló:", err);
     await pool.end().catch(() => {});
-    process.exit(1);
+    process.exitCode = 1;
   });
