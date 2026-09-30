@@ -3,7 +3,7 @@
 DROP DATABASE IF EXISTS uv_alert;
 CREATE DATABASE uv_alert;
 
-\c uv_alert;
+\c uv_alert
 
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 
